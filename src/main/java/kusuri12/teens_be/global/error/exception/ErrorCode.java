@@ -1,6 +1,5 @@
 package kusuri12.teens_be.global.error.exception;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -11,6 +10,8 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User Not Found"),
     USERNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "Username Already Exists"),
     PASSWORD_INCORRECT(HttpStatus.BAD_REQUEST, "Password Incorrect"),
+    FORUM_NOT_FOUND(HttpStatus.NOT_FOUND, "Forum Not Found"),
+    INFO_ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "Info Article Not Found"),
 
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
 
