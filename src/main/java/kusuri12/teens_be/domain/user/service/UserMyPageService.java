@@ -2,10 +2,9 @@ package kusuri12.teens_be.domain.user.service;
 
 import kusuri12.teens_be.domain.comment.domain.repository.CommentRepository;
 import kusuri12.teens_be.domain.forum.domain.repository.ForumRepository;
-import kusuri12.teens_be.domain.user.dto.UserDto;
-import kusuri12.teens_be.domain.user.entity.User;
+import kusuri12.teens_be.domain.user.presentation.dto.request.UserDto;
+import kusuri12.teens_be.domain.user.domain.User;
 import kusuri12.teens_be.domain.user.repository.UserRepository;
-import kusuri12.teens_be.global.error.exception.CustomException;
 import kusuri12.teens_be.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UserService {
+public class UserMyPageService {
 
     private final UserRepository userRepository;
     private final ForumRepository forumRepository;
@@ -32,7 +31,7 @@ public class UserService {
                 .username(user.getUsername())
                 .nickname(user.getNickname())
                 .email(user.getEmail())
-                .role(user.getRole().name())
+                .role(user.getRole())
                 .forumCount(forumCount)
                 .commentCount(commentCount)
                 .build();
