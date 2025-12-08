@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '4.0.0'
     id 'io.spring.dependency-management' version '1.1.7'
+    id "io.sentry.jvm.gradle" version "5.12.2"
 }
 
 group = 'kusuri12'
@@ -35,8 +36,17 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'io.sentry:sentry-logback:6.27.0'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+sentry {
+    includeSourceContext = true
+
+    org = "kusuri12"
+    projectName = "java-spring-boot-dl"
+    authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }
