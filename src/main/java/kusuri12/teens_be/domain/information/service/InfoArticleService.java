@@ -5,7 +5,6 @@ import kusuri12.teens_be.domain.information.entity.InfoArticle;
 import kusuri12.teens_be.domain.information.repository.InfoArticleRepository;
 import kusuri12.teens_be.domain.user.entity.User;
 import kusuri12.teens_be.domain.user.repository.UserRepository;
-import kusuri12.teens_be.global.error.exception.CustomException;
 import kusuri12.teens_be.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
