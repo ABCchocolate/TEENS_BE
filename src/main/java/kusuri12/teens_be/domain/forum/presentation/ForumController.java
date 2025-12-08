@@ -1,6 +1,7 @@
-package kusuri12.teens_be.domain.forum.controller;
+package kusuri12.teens_be.domain.forum.presentation;
 
-import kusuri12.teens_be.domain.forum.dto.ForumDto;
+import kusuri12.teens_be.domain.comment.service.CommentService;
+import kusuri12.teens_be.domain.forum.presentation.request.dto.ForumDto;
 import kusuri12.teens_be.domain.forum.service.ForumService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.util.List;
 public class ForumController {
 
     private final ForumService forumService;
+    private final CommentService commentService;
 
     @GetMapping
     public ResponseEntity<List<ForumDto.ForumListResponse>> getAllForums() {
@@ -35,7 +37,7 @@ public class ForumController {
     public ResponseEntity<Void> createComment(
             @PathVariable Long forumId,
             @RequestBody ForumDto.CreateCommentRequest request) {
-        forumService.createComment(forumId, request);
+        commentService.createComment(forumId, request);
         return ResponseEntity.ok().build();
     }
 }

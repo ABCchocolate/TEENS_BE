@@ -1,10 +1,10 @@
 package kusuri12.teens_be.domain.forum.service;
 
-import kusuri12.teens_be.domain.comment.entity.Comment;
-import kusuri12.teens_be.domain.comment.repository.CommentRepository;
-import kusuri12.teens_be.domain.forum.dto.ForumDto;
-import kusuri12.teens_be.domain.forum.entity.Forum;
-import kusuri12.teens_be.domain.forum.repository.ForumRepository;
+import kusuri12.teens_be.domain.comment.domain.Comment;
+import kusuri12.teens_be.domain.comment.domain.repository.CommentRepository;
+import kusuri12.teens_be.domain.forum.presentation.request.dto.ForumDto;
+import kusuri12.teens_be.domain.forum.domain.Forum;
+import kusuri12.teens_be.domain.forum.domain.repository.ForumRepository;
 import kusuri12.teens_be.domain.user.entity.User;
 import kusuri12.teens_be.domain.user.repository.UserRepository;
 import kusuri12.teens_be.global.error.exception.CustomException;
@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class ForumService {
 
     private final ForumRepository forumRepository;
@@ -76,22 +75,5 @@ public class ForumService {
                 .build();
 
         forumRepository.save(forum);
-    }
-
-    @Transactional
-    public void createComment(Long forumId, ForumDto.CreateCommentRequest request) {
-        Forum forum = forumRepository.findById(forumId)
-                .orElseThrow(() -> new CustomException(ErrorCode.FORUM_NOT_FOUND));
-
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        Comment comment = Comment.builder()
-                .content(request.getContent())
-                .forum(forum)
-                .user(user)
-                .build();
-
-        commentRepository.save(comment);
     }
 }
