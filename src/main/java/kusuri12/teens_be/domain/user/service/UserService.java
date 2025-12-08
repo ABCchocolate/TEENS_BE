@@ -1,7 +1,7 @@
 package kusuri12.teens_be.domain.user.service;
 
-import kusuri12.teens_be.domain.comment.repository.CommentRepository;
-import kusuri12.teens_be.domain.forum.repository.ForumRepository;
+import kusuri12.teens_be.domain.comment.domain.repository.CommentRepository;
+import kusuri12.teens_be.domain.forum.domain.repository.ForumRepository;
 import kusuri12.teens_be.domain.user.dto.UserDto;
 import kusuri12.teens_be.domain.user.entity.User;
 import kusuri12.teens_be.domain.user.repository.UserRepository;

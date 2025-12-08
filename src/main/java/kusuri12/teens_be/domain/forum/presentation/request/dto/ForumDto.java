@@ -1,4 +1,4 @@
-package kusuri12.teens_be.domain.forum.dto;
+package kusuri12.teens_be.domain.forum.presentation.request.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

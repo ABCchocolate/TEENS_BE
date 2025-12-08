@@ -1,8 +1,8 @@
 package kusuri12.teens_be.domain.user.entity;
 
 import jakarta.persistence.*;
-import kusuri12.teens_be.domain.comment.entity.Comment;
-import kusuri12.teens_be.domain.forum.entity.Forum;
+import kusuri12.teens_be.domain.comment.domain.Comment;
+import kusuri12.teens_be.domain.forum.domain.Forum;
 import kusuri12.teens_be.domain.user.entity.type.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

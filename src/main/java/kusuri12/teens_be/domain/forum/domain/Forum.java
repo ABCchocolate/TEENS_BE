@@ -1,4 +1,4 @@
-package kusuri12.teens_be.domain.forum.entity;
+package kusuri12.teens_be.domain.forum.domain;
 
 import jakarta.persistence.*;
 import kusuri12.teens_be.domain.user.entity.User;
