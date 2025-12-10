@@ -2,10 +2,11 @@ package kusuri12.teens_be.domain.user.service;
 
 import kusuri12.teens_be.domain.comment.domain.repository.CommentRepository;
 import kusuri12.teens_be.domain.forum.domain.repository.ForumRepository;
+import kusuri12.teens_be.domain.user.domain.repository.UserRepository;
 import kusuri12.teens_be.domain.user.presentation.dto.request.UserDto;
 import kusuri12.teens_be.domain.user.domain.User;
-import kusuri12.teens_be.domain.user.repository.UserRepository;
 import kusuri12.teens_be.global.error.exception.ErrorCode;
+import kusuri12.teens_be.global.error.exception.TeensException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,7 @@ public class UserMyPageService {
 
     public UserDto.UserMeResponse getUserMe(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new TeensException(ErrorCode.USER_NOT_FOUND));
 
         Long forumCount = forumRepository.countByUserId(userId);
         Long commentCount = commentRepository.countByUserId(userId);
@@ -31,7 +32,7 @@ public class UserMyPageService {
                 .username(user.getUsername())
                 .nickname(user.getNickname())
                 .email(user.getEmail())
-                .role(user.getRole())
+                .role(user.getRole().name())
                 .forumCount(forumCount)
                 .commentCount(commentCount)
                 .build();
