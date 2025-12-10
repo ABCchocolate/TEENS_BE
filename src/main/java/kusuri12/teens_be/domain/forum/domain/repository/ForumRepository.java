@@ -14,4 +14,6 @@ public interface ForumRepository extends JpaRepository<Forum, Long> {
     List<Forum> findAllOrderByCreatedAtDesc();
 
     Long countByUserId(Long userId);
+
+    int countByUser_Id(Long id);
 }

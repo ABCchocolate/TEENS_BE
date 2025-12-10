@@ -8,8 +8,9 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ErrorCode {
 
-    // 유효하지 않거나 만료된 access token으로 요청 시
-    AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "Authentication Failed"),
+    // access Token 만료됨
+    EXPIRED_JWT(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
+    INVALID_JWT(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
 
     // 유저 정보를 찾을 수 없음
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자를 찾을 수 없습니다."),

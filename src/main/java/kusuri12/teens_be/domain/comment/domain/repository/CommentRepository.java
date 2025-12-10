@@ -9,9 +9,7 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    Long countByForumId(Long forumId);
-
-    Long countByUserId(Long userId);
+    int countByUserId(Long userId);
 
     List<Comment> findByForumIdOrderByCreatedAtAsc(Long forumId);
 }
