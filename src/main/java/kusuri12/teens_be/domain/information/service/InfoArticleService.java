@@ -1,10 +1,11 @@
 package kusuri12.teens_be.domain.information.service;
 
 import kusuri12.teens_be.domain.information.dto.InfoArticleDto;
-import kusuri12.teens_be.domain.information.entity.InfoArticle;
+import kusuri12.teens_be.domain.information.domain.InfoArticle;
 import kusuri12.teens_be.domain.information.repository.InfoArticleRepository;
-import kusuri12.teens_be.domain.user.entity.User;
-import kusuri12.teens_be.domain.user.repository.UserRepository;
+import kusuri12.teens_be.domain.user.domain.User;
+import kusuri12.teens_be.domain.user.domain.repository.UserRepository;
+import kusuri12.teens_be.domain.information.exception.ErrorException;
 import kusuri12.teens_be.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class InfoArticleService {
 
     public InfoArticleDto.InfoArticleDetailResponse getInfoArticleDetail(Long articleId) {
         InfoArticle article = infoArticleRepository.findById(articleId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INFO_ARTICLE_NOT_FOUND));
+                .orElseThrow(() -> new ErrorException(ErrorCode.INFO_ARTICLE_NOT_FOUND));
 
         return InfoArticleDto.InfoArticleDetailResponse.builder()
                 .id(article.getId())
@@ -52,7 +53,7 @@ public class InfoArticleService {
     @Transactional
     public void createInfoArticle(InfoArticleDto.CreateInfoArticleRequest request) {
         User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new ErrorException(ErrorCode.USER_NOT_FOUND));
 
         InfoArticle article = InfoArticle.builder()
                 .title(request.getTitle())

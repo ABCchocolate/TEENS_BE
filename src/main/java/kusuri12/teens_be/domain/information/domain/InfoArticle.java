@@ -1,7 +1,7 @@
-package kusuri12.teens_be.domain.information.entity;
+package kusuri12.teens_be.domain.information.domain;
 
 import jakarta.persistence.*;
-import kusuri12.teens_be.domain.user.entity.User;
+import kusuri12.teens_be.domain.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

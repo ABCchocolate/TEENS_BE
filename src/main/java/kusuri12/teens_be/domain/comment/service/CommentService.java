@@ -5,7 +5,7 @@ import kusuri12.teens_be.domain.comment.domain.repository.CommentRepository;
 import kusuri12.teens_be.domain.forum.domain.Forum;
 import kusuri12.teens_be.domain.forum.domain.repository.ForumRepository;
 import kusuri12.teens_be.domain.forum.presentation.request.dto.ForumDto;
-import kusuri12.teens_be.domain.user.entity.User;
+import kusuri12.teens_be.domain.user.domain.User;
 import kusuri12.teens_be.domain.user.repository.UserRepository;
 import kusuri12.teens_be.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
