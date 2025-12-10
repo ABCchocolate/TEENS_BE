@@ -19,7 +19,7 @@ public class AuthDetails implements UserDetails {
     private String email;
     private String role;
     private String password;
-    private int postCount;
+    private int forumCount;
     private int commentCount;
     private String profileImg;
 
@@ -30,7 +30,7 @@ public class AuthDetails implements UserDetails {
         this.email = user.getEmail();
         this.role = user.getRole().name();
         this.password = user.getPassword();
-        this.postCount = user.getPostCount();
+        this.forumCount = user.getForumCount();
         this.commentCount = user.getCommentCount();
         this.profileImg = user.getProfileImg();
     }
