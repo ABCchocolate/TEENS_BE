@@ -1,4 +1,4 @@
-package kusuri12.teens_be.domain.information.dto;
+package kusuri12.teens_be.domain.information.presentation.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

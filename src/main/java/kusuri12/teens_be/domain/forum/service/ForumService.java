@@ -2,12 +2,13 @@ package kusuri12.teens_be.domain.forum.service;
 
 import kusuri12.teens_be.domain.comment.domain.Comment;
 import kusuri12.teens_be.domain.comment.domain.repository.CommentRepository;
+import kusuri12.teens_be.domain.comment.exception.ForumNotFoundException;
 import kusuri12.teens_be.domain.forum.presentation.request.dto.ForumDto;
 import kusuri12.teens_be.domain.forum.domain.Forum;
 import kusuri12.teens_be.domain.forum.domain.repository.ForumRepository;
-import kusuri12.teens_be.domain.user.entity.User;
-import kusuri12.teens_be.domain.user.repository.UserRepository;
-import kusuri12.teens_be.global.error.exception.ErrorCode;
+import kusuri12.teens_be.domain.user.domain.User;
+import kusuri12.teens_be.domain.user.domain.repository.UserRepository;
+import kusuri12.teens_be.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +40,7 @@ public class ForumService {
 
     public ForumDto.ForumDetailResponse getForumDetail(Long forumId) {
         Forum forum = forumRepository.findById(forumId)
-                .orElseThrow(() -> new CustomException(ErrorCode.FORUM_NOT_FOUND));
+                .orElseThrow(() -> ForumNotFoundException.EXCEPTION);
 
         List<Comment> comments = commentRepository.findByForumIdOrderByCreatedAtAsc(forumId);
 
@@ -65,7 +66,7 @@ public class ForumService {
     @Transactional
     public void createForum(ForumDto.CreateForumRequest request) {
         User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> UserNotFoundException.EXCEPTION);
 
         Forum forum = Forum.builder()
                 .title(request.getTitle())

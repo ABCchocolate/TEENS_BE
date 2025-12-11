@@ -1,6 +1,6 @@
-package kusuri12.teens_be.domain.information.controller;
+package kusuri12.teens_be.domain.information.presentation;
 
-import kusuri12.teens_be.domain.information.dto.InfoArticleDto;
+import kusuri12.teens_be.domain.information.presentation.dto.InfoArticleDto;
 import kusuri12.teens_be.domain.information.service.InfoArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
