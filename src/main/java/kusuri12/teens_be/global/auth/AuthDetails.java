@@ -13,15 +13,34 @@ import java.util.List;
 @Getter
 public class AuthDetails implements UserDetails {
 
-    private Long id;
-    private String username;
-    private String nickname;
-    private String email;
-    private String role;
-    private String password;
-    private int forumCount;
-    private int commentCount;
-    private String profileImg;
+    private final Long id;
+    private final String username;
+    private final String nickname;
+    private final String email;
+    private final String role;
+    private final String password;
+    private final int forumCount;
+    private final int commentCount;
+    private final String profileImg;
+    private final Collection<? extends GrantedAuthority> authorities;
+
+    public AuthDetails(
+            Long id,
+            String username,
+            Collection<? extends GrantedAuthority> authorities) {
+
+        this.id = id;
+        this.username = username;
+        this.authorities = authorities;
+
+        this.nickname = null;
+        this.email = null;
+        this.role = null;
+        this.password = null;
+        this.forumCount = 0;
+        this.commentCount = 0;
+        this.profileImg = null;
+    }
 
     public AuthDetails(User user) {
         this.id = user.getId();
@@ -33,13 +52,14 @@ public class AuthDetails implements UserDetails {
         this.forumCount = user.getForumCount();
         this.commentCount = user.getCommentCount();
         this.profileImg = user.getProfileImg();
+        List<GrantedAuthority> authList = new ArrayList<>();
+        authList.add(new SimpleGrantedAuthority("ROLE_" + role));
+        this.authorities = authList;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
-        return authorities;
+        return this.authorities;
     }
 
     @Override

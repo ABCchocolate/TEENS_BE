@@ -4,12 +4,13 @@ import kusuri12.teens_be.domain.comment.domain.repository.CommentRepository;
 import kusuri12.teens_be.domain.forum.domain.repository.ForumRepository;
 import kusuri12.teens_be.domain.user.domain.repository.UserRepository;
 import kusuri12.teens_be.domain.user.domain.User;
+import kusuri12.teens_be.domain.user.exception.PasswordMismatchException;
+import kusuri12.teens_be.domain.user.exception.SamePasswordException;
 import kusuri12.teens_be.domain.user.exception.UserNotFoundException;
 import kusuri12.teens_be.domain.user.presentation.dto.request.NicknameRequest;
+import kusuri12.teens_be.domain.user.presentation.dto.request.PasswordRequest;
 import kusuri12.teens_be.domain.user.presentation.dto.response.UserMeResponse;
-import kusuri12.teens_be.global.auth.AuthDetailService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,7 @@ public class UserMyPageService {
     private final UserRepository userRepository;
     private final ForumRepository forumRepository;
     private final CommentRepository commentRepository;
-    private final BCryptPasswordEncoder encoder;
+    private final PasswordEncoder encoder;
 
     @Transactional(readOnly = true)
     public UserMeResponse getUserMe(Long id) {
@@ -48,10 +49,28 @@ public class UserMyPageService {
         user.updateNickname(request.nickname());
     }
 
-    public void changePassword(String password, Long id) {
+    @Transactional
+    public void changePassword(PasswordRequest request, Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> UserNotFoundException.EXCEPTION);
 
-        user.updatePassword(encoder.encode(password));
+        if (!encoder.matches(request.currentPassword(), user.getPassword())
+                || !request.newPassword().equals(request.confirmPassword())) {
+            throw PasswordMismatchException.EXCEPTION;
+        }
+
+        if (request.currentPassword().equals(request.newPassword())) {
+            throw SamePasswordException.EXCEPTION;
+        }
+
+        user.updatePassword(encoder.encode(request.newPassword()));
+    }
+
+    @Transactional
+    public void uploadProfileImg(String profileImg, Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> UserNotFoundException.EXCEPTION);
+
+        user.updateProfileImg(profileImg);
     }
 }

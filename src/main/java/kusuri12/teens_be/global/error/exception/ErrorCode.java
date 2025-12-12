@@ -16,6 +16,7 @@ public enum ErrorCode {
     AUTH_CODE_MISMATCH(HttpStatus.BAD_REQUEST, "인증 코드가 일치하지 않습니다. 다시 확인해주세요."),
     PASSWORD_PATTERN_VIOLATION(HttpStatus.BAD_REQUEST, "비밀번호 규칙을 위반했습니다."),
     PASSWORD_CONFIRM_WRONG(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+    SAME_PASSWORD_WRONG(HttpStatus.BAD_REQUEST, "새 비밀번호가 현재 비밀번호와 같습니다."),
     NO_TITLE(HttpStatus.BAD_REQUEST, "제목을 입력해주세요."),
     OVER_CONTENT(HttpStatus.BAD_REQUEST, "내용은 2000자를 넘을 수 없습니다."),
     NO_COMMENT_CONTENT(HttpStatus.BAD_REQUEST, "내용을 작성해주세요."),
