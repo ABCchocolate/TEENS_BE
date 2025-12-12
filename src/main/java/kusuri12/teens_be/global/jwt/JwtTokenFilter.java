@@ -1,14 +1,19 @@
 package kusuri12.teens_be.global.jwt;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kusuri12.teens_be.global.auth.AuthDetailService;
+import kusuri12.teens_be.global.auth.AuthDetails;
+import kusuri12.teens_be.global.jwt.exception.ExpiredJwtException;
 import kusuri12.teens_be.global.jwt.exception.InvalidJwtException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -19,6 +24,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import javax.swing.*;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -26,7 +33,6 @@ import java.util.Arrays;
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final AuthDetailService authDetailService;
     private final AntPathMatcher matcher = new AntPathMatcher(); // url, 파일 경로가 일치하는 지 확인하는 Matcher
 
     // TODO: 안에 들어갈 end point 명시하기, 귀찮아서 미룸
@@ -55,23 +61,44 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                                     ) throws ServletException, IOException {
         String jwt = getJwt(request);
 
-        if (!jwtTokenProvider.validateToken(jwt)) throw InvalidJwtException.EXCEPTION;
-
-        String username = jwtTokenProvider.getUsername(jwt);
-        String tokenType = jwtTokenProvider.getTokenType(jwt);
-
-        if ("ACCESS".equals(tokenType)) {
-            UserDetails userDetails = authDetailService.loadUserByUsername(username);
-            if (userDetails == null) {
-                throw InvalidJwtException.EXCEPTION;
-            }
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (jwt == null) {
+            chain.doFilter(request, response);
+            return;
         }
-    }  // 진짜 너무 어렵다. 나중에 제대로 공부해야겠다.
+
+        try {
+            // 토큰 파싱 및 유효성 검사
+            Claims claims = jwtTokenProvider.parse(jwt);
+
+            String tokenType = claims.get("tokenType", String.class);
+            String username = claims.getSubject();
+            Long userId = claims.get("userId", Long.class);
+            String authoritiesStr = claims.get("authorities", String.class);
+
+            // ACCESS 토큰이고 필수 클레임이 존재할 경우
+            if ("ACCESS".equals(tokenType) && username != null && userId != null) {
+
+                // 권한 파싱
+                List<GrantedAuthority> authorities = Arrays.stream(authoritiesStr.split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+
+                UserDetails userDetails = new AuthDetails(userId, username, authorities);
+
+                // 인증 객체 생성 및 Security Context에 설정
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+            chain.doFilter(request, response);
+        } catch (ExpiredJwtException e) {
+            throw ExpiredJwtException.EXCEPTION;
+        } catch (InvalidJwtException e) {
+            throw InvalidJwtException.EXCEPTION;
+        }
+    }
 
     // Jwt 추출 메서드
     private String getJwt(HttpServletRequest request) {
