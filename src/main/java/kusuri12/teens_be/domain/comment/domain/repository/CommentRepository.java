@@ -12,4 +12,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     int countByUserId(Long userId);
 
     List<Comment> findByForumIdOrderByCreatedAtAsc(Long forumId);
+
+    Long countByForumId(Long id);
 }
