@@ -11,7 +11,7 @@ public enum ErrorCode {
     VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "요청 데이터 유효성 검증에 실패했습니다."),
     INVALID_USERNAME_LENGTH(HttpStatus.BAD_REQUEST, "아이디는 4자 이상 20자 이하로 입력해야 합니다."),
     USERNAME_PATTERN_VIOLATION(HttpStatus.BAD_REQUEST, "유효하지 않은 아이디입니다."),
-    INVALID_EMAIL(HttpStatus.BAD_REQUEST, "유효하지 않은 이메일 형식입니다."),
+    INVALID_EMAIL_EXTENSION(HttpStatus.BAD_REQUEST, "유효하지 않은 이메일 형식입니다."),
     AUTH_CODE_EXPIRED(HttpStatus.BAD_REQUEST, "인증 시간이 만료되었습니다. 다시 인증 코드를 발급받아주세요."),
     AUTH_CODE_MISMATCH(HttpStatus.BAD_REQUEST, "인증 코드가 일치하지 않습니다. 다시 확인해주세요."),
     PASSWORD_PATTERN_VIOLATION(HttpStatus.BAD_REQUEST, "비밀번호 규칙을 위반했습니다."),
