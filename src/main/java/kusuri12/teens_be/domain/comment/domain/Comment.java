@@ -34,4 +34,9 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    // 수정 메서드 추가
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }

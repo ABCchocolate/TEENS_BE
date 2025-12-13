@@ -39,4 +39,12 @@ public class InfoArticle {
 
     @Column
     private String imageUrl;
+
+    // 수정 메서드 추가
+    public void updateTitleAndContent(String title, String content, boolean pinned, String imageUrl) {
+        this.title = title;
+        this.content = content;
+        this.pinned = pinned;
+        this.imageUrl = imageUrl;
+    }
 }
