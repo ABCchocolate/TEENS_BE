@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import kusuri12.teens_be.domain.comment.domain.Comment;
 import kusuri12.teens_be.domain.forum.domain.Forum;
 import kusuri12.teens_be.domain.user.domain.type.Role;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
     @Id
@@ -22,8 +23,8 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @Column
-    private String nickname = username;
+    @Column(nullable = false)
+    private String nickname;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -69,4 +70,13 @@ public class User {
     public void increaseCommentCount() { this.commentCount++; }
 
     public void decreaseCommentCount() { if (this.commentCount > 0) this.commentCount--; }
+  
+    @Builder
+    public User(String username, String email, Role role, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.nickname = username;
+    }
 }

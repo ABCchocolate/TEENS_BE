@@ -4,8 +4,9 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import kusuri12.teens_be.global.auth.AuthDetails;
+import kusuri12.teens_be.global.jwt.exception.ExpiredJwtException;
+import kusuri12.teens_be.global.jwt.exception.InvalidJwtException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
@@ -31,58 +32,49 @@ public class JwtTokenProvider {
         this.refreshTokenExpiration = refreshTokenExpiration;
     }
 
-    // JwtTokens 객체 생성 메서드, accessToken과 refreshToken 쌍 생성
-    public JwtTokens generateToken(Authentication authentication) {
-        AuthDetails authDetails = (AuthDetails) authentication.getPrincipal();
+    public String generateToken(AuthDetails authDetails, String type, Long ext) {
         LocalDateTime now = LocalDateTime.now();
 
-        String authorities = authentication.getAuthorities().stream()
+        Date expiresAt = Date.from(now.plusSeconds(ext/1000)
+                .atZone(ZoneId.systemDefault()).toInstant());
+
+        String authorities = authDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        Date accessTokenExpiresAt = Date.from(now.plusSeconds(accessTokenExpiration/1000)
-                .atZone(ZoneId.systemDefault()).toInstant());
-
-        Date refreshTokenExpiresAt = Date.from(now.plusSeconds(refreshTokenExpiration/1000)
-                .atZone(ZoneId.systemDefault()).toInstant());
-
-        String accessToken = Jwts.builder()
+        return Jwts.builder()
                 .setSubject(authDetails.getUsername())
                 .claim("userId", authDetails.getId())
                 .claim("authorities", authorities)
-                .claim("tokenType", "ACCESS")
+                .claim("tokenType", type)
                 .issuedAt(new Date())
-                .expiration(accessTokenExpiresAt)
+                .expiration(expiresAt)
                 .signWith(key, Jwts.SIG.HS512)
                 .compact();
-
-        String refreshToken = Jwts.builder()
-                .setSubject(authDetails.getUsername())
-                .claim("userId", authDetails.getId())
-                .claim("authorities", authorities)
-                .claim("tokenType", "REFRESH")
-                .issuedAt(new Date())
-                .expiration(refreshTokenExpiresAt)
-                .signWith(key, Jwts.SIG.HS512)
-                .compact();
-
-        return JwtTokens.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .accessTokenExpiresAt(LocalDateTime.ofInstant(accessTokenExpiresAt.toInstant(), ZoneId.systemDefault()))
-                .refreshTokenExpiresAt(LocalDateTime.ofInstant(refreshTokenExpiresAt.toInstant(), ZoneId.systemDefault()))
-                .build();
     }
 
-    // TODO: RefreshToken 객체만을 생성하는 메서드 만들기
+    public String generateAccessToken(AuthDetails authDetails) {
+        return generateToken(authDetails, "ACCESS", accessTokenExpiration);
+    }
+
+    public String generateRefreshToken(AuthDetails authDetails) {
+        return generateToken(authDetails, "REFRESH", refreshTokenExpiration);
+    }
 
     // Token Body를 얻는 메서드
     public Claims parse(String token) {
-        return Jwts.parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        try {
+            return Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (io.jsonwebtoken.ExpiredJwtException e){
+            throw ExpiredJwtException.EXCEPTION;
+        } catch (io.jsonwebtoken.JwtException | IllegalArgumentException e) {
+            // 2. 그 외 모든 유효성 예외(서명, 형식 오류, null 등)는 Invalid로 처리합니다.
+            throw InvalidJwtException.EXCEPTION;
+        }
     }
 
     public String getUsername(String token) {
@@ -95,20 +87,5 @@ public class JwtTokenProvider {
 
     public String getTokenType(String token) {
         return parse(token).get("tokenType", String.class);
-    }
-
-    // 토큰 유효성 검사
-    public boolean validateToken(String token) {
-        try {
-            parse(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    // 토큰 만료 검사
-    public boolean isTokenExpired(String token) {
-        return parse(token).getExpiration().before(new Date());
     }
 }
