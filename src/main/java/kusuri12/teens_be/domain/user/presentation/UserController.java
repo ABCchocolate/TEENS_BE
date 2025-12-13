@@ -1,5 +1,6 @@
 package kusuri12.teens_be.domain.user.presentation;
 
+import jakarta.validation.Valid;
 import kusuri12.teens_be.domain.user.presentation.dto.request.NicknameRequest;
 import kusuri12.teens_be.domain.user.presentation.dto.request.PasswordRequest;
 import kusuri12.teens_be.domain.user.presentation.dto.response.UserMeResponse;
@@ -30,28 +31,31 @@ public class UserController {
     }
 
     @PutMapping("/nickname")
-    public void changeNickname(
+    public ResponseEntity<Void> changeNickname(
             @AuthenticationPrincipal AuthDetails authDetails,
-            @RequestBody NicknameRequest request) {
+            @Valid @RequestBody NicknameRequest request) {
         Long id = authDetails.getId();
         userMypageService.changeNickname(request, id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/password")
-    public void changePassword(
+    public ResponseEntity<Void> changePassword(
             @AuthenticationPrincipal AuthDetails authDetails,
-            @RequestBody PasswordRequest request) {
+            @Valid @RequestBody PasswordRequest request) {
         Long id = authDetails.getId();
         userMypageService.changePassword(request, id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/profile-image")
-    public void uploadProfileImg(
+    public ResponseEntity<Void> uploadProfileImg(
             @AuthenticationPrincipal AuthDetails authDetails,
             @RequestPart MultipartFile file) {
         Long id = authDetails.getId();
         String imgUrl = s3UploadService.upload(file, "user/profiles/");
 
         userMypageService.uploadProfileImg(imgUrl, id);
+        return ResponseEntity.noContent().build();
     }
 }

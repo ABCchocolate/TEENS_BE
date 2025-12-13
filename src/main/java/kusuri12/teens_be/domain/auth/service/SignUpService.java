@@ -1,6 +1,7 @@
 package kusuri12.teens_be.domain.auth.service;
 
 import kusuri12.teens_be.domain.auth.exception.EmailAlreadyExistsException;
+import kusuri12.teens_be.domain.auth.exception.PasswordConfirmWrongException;
 import kusuri12.teens_be.domain.auth.exception.UsernameAlreadyExistsException;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.SignUpRequest;
 import kusuri12.teens_be.domain.user.domain.User;
@@ -24,6 +25,10 @@ public class SignUpService {
 
     @Transactional
     public void signUp(SignUpRequest request) {
+
+        if (!request.password().equals(request.confirmPassword())) {
+            throw PasswordConfirmWrongException.EXCEPTION;
+        }
 
         if (userRepository.existsByUsername(request.username())) {
             throw UsernameAlreadyExistsException.EXCEPTION;

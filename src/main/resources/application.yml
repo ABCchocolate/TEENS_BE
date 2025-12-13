@@ -17,6 +17,10 @@ spring:
     username: root
     password: ${PASSWORD}
 
+  messages:
+    basename: classpath:messages
+    encoding: UTF-8
+
 server:
   port: ${PORT:8080}
 
@@ -33,8 +37,8 @@ jwt:
 cloud:
   aws:
     credentials:
-      accessKey: ${ACCESS_KEY}
-      secretKey: ${SECRET_KEY}
+      access-key: ${ACCESS_KEY}
+      secret-key: ${SECRET_KEY}
     s3:
       bucket: ${BUCKET_NAME}
       exp-time: 604800000
