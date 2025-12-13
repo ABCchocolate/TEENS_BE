@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import kusuri12.teens_be.domain.comment.domain.Comment;
 import kusuri12.teens_be.domain.forum.domain.Forum;
 import kusuri12.teens_be.domain.user.domain.type.Role;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -60,4 +61,12 @@ public class User {
     public void updateProfileImg(String profileImg) {
         this.profileImg = profileImg;
     }
+
+    public void increaseForumCount() { this.forumCount++; }
+
+    public void decreaseForumCount() { if (this.forumCount > 0) this.forumCount--; }
+
+    public void increaseCommentCount() { this.commentCount++; }
+
+    public void decreaseCommentCount() { if (this.commentCount > 0) this.commentCount--; }
 }
