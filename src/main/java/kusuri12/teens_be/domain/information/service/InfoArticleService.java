@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class InfoArticleService {
 
     private final InfoArticleRepository infoArticleRepository;
@@ -53,7 +53,6 @@ public class InfoArticleService {
                 .build();
     }
 
-    @Transactional
     public void createInfoArticle(CreateInfoArticleRequest request) {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> UserNotFoundException.EXCEPTION);
@@ -69,7 +68,6 @@ public class InfoArticleService {
         infoArticleRepository.save(article);
     }
 
-    @Transactional
     public void updateInfoArticle(Long articleId, UpdateInfoArticleRequest request) {
         InfoArticle article = infoArticleRepository.findById(articleId)
                 .orElseThrow(() -> InfoArticleNotFoundException.EXCEPTION);
@@ -78,7 +76,6 @@ public class InfoArticleService {
                 request.isPinned(), request.getImageUrl());
     }
 
-    @Transactional
     public void deleteInfoArticle(Long articleId) {
         InfoArticle article = infoArticleRepository.findById(articleId)
                 .orElseThrow(() -> InfoArticleNotFoundException.EXCEPTION);

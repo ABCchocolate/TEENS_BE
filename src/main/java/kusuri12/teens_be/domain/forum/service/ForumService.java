@@ -28,6 +28,7 @@ public class ForumService {
     private final ForumRepository forumRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
+    private Long userId;
 
     public List<ForumListResponse> getAllForums() {
         List<Forum> forums = forumRepository.findAllOrderByCreatedAtDesc();
@@ -68,9 +69,8 @@ public class ForumService {
                 .build();
     }
 
-    @Transactional
     public void createForum(CreateForumRequest request) {
-        User user = userRepository.findById(request.getUserId())
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> UserNotFoundException.EXCEPTION);
 
         Forum forum = Forum.builder()
@@ -80,9 +80,11 @@ public class ForumService {
                 .build();
 
         forumRepository.save(forum);
+
+        // ForumCount 증가
+        user.increaseForumCount();
     }
 
-    @Transactional
     public void updateForum(Long forumId, UpdateForumRequest request) {
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> ForumNotFoundException.EXCEPTION);
@@ -90,10 +92,13 @@ public class ForumService {
         forum.updateTitleAndContent(request.getTitle(), request.getContent());
     }
 
-    @Transactional
     public void deleteForum(Long forumId) {
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> ForumNotFoundException.EXCEPTION);
+
+        // ForumCount 감소
+        User user = forum.getUser();
+        user.decreaseForumCount();
 
         forumRepository.delete(forum);
     }

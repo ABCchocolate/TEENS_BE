@@ -63,6 +63,14 @@ public class User {
         this.profileImg = profileImg;
     }
 
+    public void increaseForumCount() { this.forumCount++; }
+
+    public void decreaseForumCount() { if (this.forumCount > 0) this.forumCount--; }
+
+    public void increaseCommentCount() { this.commentCount++; }
+
+    public void decreaseCommentCount() { if (this.commentCount > 0) this.commentCount--; }
+  
     @Builder
     public User(String username, String email, Role role, String password) {
         this.username = username;

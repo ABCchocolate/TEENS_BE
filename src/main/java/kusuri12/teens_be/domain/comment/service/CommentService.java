@@ -23,13 +23,13 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final ForumRepository forumRepository;
     private final UserRepository userRepository;
+    private Long forumId;
 
-    @Transactional
-    public void createComment(Long forumId, CreateCommentRequest request) {
+    public void createComment(Long userId, CreateCommentRequest request) {
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> ForumNotFoundException.EXCEPTION);
 
-        User user = userRepository.findById(request.getUserId())
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> UserNotFoundException.EXCEPTION);
 
         Comment comment = Comment.builder()
@@ -39,9 +39,11 @@ public class CommentService {
                 .build();
 
         commentRepository.save(comment);
+
+        // CommentCount 증가
+        user.increaseCommentCount();
     }
 
-    @Transactional
     public void updateComment(Long commentId, UpdateCommentRequest request) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> CommentNotFoundException.EXCEPTION);
@@ -49,10 +51,13 @@ public class CommentService {
         comment.updateContent(request.getContent());
     }
 
-    @Transactional
     public void deleteComment(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> CommentNotFoundException.EXCEPTION);
+
+        // CommentCount 감소
+        User user = comment.getUser();
+        user.decreaseCommentCount();
 
         commentRepository.delete(comment);
     }
