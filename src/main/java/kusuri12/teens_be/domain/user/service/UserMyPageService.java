@@ -54,7 +54,8 @@ public class UserMyPageService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> UserNotFoundException.EXCEPTION);
 
-        if (!encoder.matches(request.currentPassword(), user.getPassword())) {
+        if (!encoder.matches(request.currentPassword(), user.getPassword())
+                || !request.newPassword().equals(request.confirmPassword())) {
             throw PasswordMismatchException.EXCEPTION;
         }
 

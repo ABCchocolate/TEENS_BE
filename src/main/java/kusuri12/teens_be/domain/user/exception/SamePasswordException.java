@@ -5,8 +5,7 @@ import kusuri12.teens_be.global.error.exception.TeensException;
 
 public class SamePasswordException extends TeensException {
     public static final SamePasswordException EXCEPTION = new SamePasswordException();
-
-    SamePasswordException() {
+    private SamePasswordException() {
         super(ErrorCode.SAME_PASSWORD_WRONG);
     }
 }
