@@ -1,6 +1,8 @@
 package kusuri12.teens_be.global.config;
 
 import kusuri12.teens_be.global.error.GlobalExceptionFilter;
+import kusuri12.teens_be.global.error.handler.CustomAccessDeniedHandler;
+import kusuri12.teens_be.global.error.handler.CustomAuthenticationEntryPoint;
 import kusuri12.teens_be.global.jwt.JwtTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +29,8 @@ public class SecurityConfig {
 
     private final JwtTokenFilter jwtTokenFilter;
     private final GlobalExceptionFilter globalExceptionFilter;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -38,6 +42,10 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+                .exceptionHandling(handling -> handling
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler))
+
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/auth/sign-up/**",
@@ -47,9 +55,16 @@ public class SecurityConfig {
                                 "/auth/verify-email/**"
                                 ).permitAll()
 
+                        .requestMatchers(
+                                "/auth/sign-out",
+                                "/auth/quit"
+                                ).authenticated()
+
                         .requestMatchers(HttpMethod.GET, "/forum/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/info-article/**").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers(HttpMethod.GET, "/information/**").permitAll()
+                        .requestMatchers("/forum/**").hasRole("USER")
+                        .requestMatchers("/information/**").hasRole("ADMIN")
+                        .anyRequest().hasRole("USER"))
 
                 .addFilterBefore(globalExceptionFilter, LogoutFilter.class)
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)

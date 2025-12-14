@@ -1,4 +1,4 @@
-package kusuri12.teens_be.global.error;
+package kusuri12.teens_be.global.error.handler;
 
 import kusuri12.teens_be.global.error.exception.ErrorCode;
 import kusuri12.teens_be.global.error.exception.ErrorResponse;

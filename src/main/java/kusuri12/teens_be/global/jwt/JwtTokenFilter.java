@@ -37,9 +37,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private final SignOutService signOutService;
     private final AntPathMatcher matcher = new AntPathMatcher(); // url, 파일 경로가 일치하는 지 확인하는 Matcher
 
-    // TODO: 안에 들어갈 end point 명시하기, 귀찮아서 미룸
     private static final String[] PERMITTED_AUTH = {
-            "/auth/**"
+            "/auth/sign-up",
+            "/auth/sign-in",
+            "/auth/refresh",
+
+            "/auth/check-id/**",
+            "/auth/verify-email/**",
     };
 
     @Override
