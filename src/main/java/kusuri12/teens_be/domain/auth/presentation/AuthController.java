@@ -2,14 +2,13 @@ package kusuri12.teens_be.domain.auth.presentation;
 
 import jakarta.validation.Valid;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.CheckIdRequest;
+import kusuri12.teens_be.domain.auth.presentation.dto.request.RefreshTokenRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.SignInRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.SignUpRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.response.CheckIdResponse;
 import kusuri12.teens_be.domain.auth.presentation.dto.response.SignInResponse;
-import kusuri12.teens_be.domain.auth.service.CheckIdService;
-import kusuri12.teens_be.domain.auth.service.SignInService;
-import kusuri12.teens_be.domain.auth.service.SignOutService;
-import kusuri12.teens_be.domain.auth.service.SignUpService;
+import kusuri12.teens_be.domain.auth.presentation.dto.response.TokenResponse;
+import kusuri12.teens_be.domain.auth.service.*;
 import kusuri12.teens_be.global.auth.AuthDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +24,7 @@ public class AuthController {
     private final SignInService signInService;
     private final CheckIdService checkIdService;
     private final SignOutService signOutService;
+    private final ReissueService reissueService;
 
     @PostMapping("/sign-up")
     public ResponseEntity<Void> signUp(@Valid @RequestBody SignUpRequest request) {
@@ -58,5 +58,11 @@ public class AuthController {
         String accessToken = accessTokenHeader.substring(7);
         signOutService.quit(accessToken, authDetails.getUsername());
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/reissue")
+    public ResponseEntity<TokenResponse> reissue(
+            @RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(reissueService.reissue(request));
     }
 }
