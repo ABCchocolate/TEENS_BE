@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import kusuri12.teens_be.domain.auth.service.SignOutService;
 import kusuri12.teens_be.global.auth.AuthDetailService;
 import kusuri12.teens_be.global.auth.AuthDetails;
 import kusuri12.teens_be.global.jwt.exception.ExpiredJwtException;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final SignOutService signOutService;
     private final AntPathMatcher matcher = new AntPathMatcher(); // url, 파일 경로가 일치하는 지 확인하는 Matcher
 
     // TODO: 안에 들어갈 end point 명시하기, 귀찮아서 미룸
@@ -78,6 +80,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             // ACCESS 토큰이고 필수 클레임이 존재할 경우
             if ("ACCESS".equals(tokenType) && username != null && userId != null) {
 
+                if (signOutService.isBlackList(jwt)) {
+                    throw InvalidJwtException.EXCEPTION;
+                }
+
                 // 권한 파싱
                 List<GrantedAuthority> authorities = Arrays.stream(authoritiesStr.split(","))
                         .map(SimpleGrantedAuthority::new)
@@ -92,6 +98,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+
             chain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
             throw ExpiredJwtException.EXCEPTION;
