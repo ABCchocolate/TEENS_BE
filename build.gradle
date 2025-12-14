@@ -34,7 +34,7 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
     implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
-    implementation 'io.sentry:sentry-spring-boot-starter-jakarta:7.9.0'
+    implementation 'io.sentry:sentry-spring-boot-starter-jakarta:8.22.0'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     compileOnly 'org.projectlombok:lombok'

@@ -10,7 +10,7 @@ public record PasswordRequest(
 
         @NotBlank(message = "{validation.password.blank}")
         @Size(min = 8, max = 60, message = "{validation.password.length}")
-        @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9._-]{8,60}$",
+        @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9._-]{8,60}$",
                 message = "{validation.password.pattern}")
         String newPassword,
 
