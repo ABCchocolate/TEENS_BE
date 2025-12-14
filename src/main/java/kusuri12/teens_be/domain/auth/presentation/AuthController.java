@@ -1,17 +1,20 @@
 package kusuri12.teens_be.domain.auth.presentation;
 
 import jakarta.validation.Valid;
+import kusuri12.teens_be.domain.auth.presentation.dto.request.CheckIdRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.SignInRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.SignUpRequest;
+import kusuri12.teens_be.domain.auth.presentation.dto.response.CheckIdResponse;
 import kusuri12.teens_be.domain.auth.presentation.dto.response.SignInResponse;
+import kusuri12.teens_be.domain.auth.service.CheckIdService;
 import kusuri12.teens_be.domain.auth.service.SignInService;
+import kusuri12.teens_be.domain.auth.service.SignOutService;
 import kusuri12.teens_be.domain.auth.service.SignUpService;
+import kusuri12.teens_be.global.auth.AuthDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -20,6 +23,8 @@ public class AuthController {
 
     private final SignUpService signUpService;
     private final SignInService signInService;
+    private final CheckIdService checkIdService;
+    private final SignOutService signOutService;
 
     @PostMapping("/sign-up")
     public ResponseEntity<Void> signUp(@Valid @RequestBody SignUpRequest request) {
@@ -32,4 +37,26 @@ public class AuthController {
         return ResponseEntity.ok(signInService.signIn(request));
     }
 
+    @GetMapping("/check-id")
+    public ResponseEntity<CheckIdResponse> checkId(@RequestParam CheckIdRequest request) {
+        return ResponseEntity.ok(checkIdService.checkId(request));
+    }
+
+    @PostMapping("/sign-out")
+    public ResponseEntity<Void> signOut(
+            @AuthenticationPrincipal AuthDetails authDetails,
+            @RequestHeader("Authorization") String accessTokenHeader) {
+        String accessToken = accessTokenHeader.substring(7); // "Bearer " 제거
+        signOutService.signOut(accessToken, authDetails.getUsername());
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/quit")
+    public ResponseEntity<Void> quit(
+            @AuthenticationPrincipal AuthDetails authDetails,
+            @RequestHeader("Authorization") String accessTokenHeader) {
+        String accessToken = accessTokenHeader.substring(7);
+        signOutService.quit(accessToken, authDetails.getUsername());
+        return ResponseEntity.noContent().build();
+    }
 }

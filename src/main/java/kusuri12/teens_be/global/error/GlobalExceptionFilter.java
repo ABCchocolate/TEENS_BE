@@ -1,5 +1,6 @@
 package kusuri12.teens_be.global.error;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.sentry.Sentry;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,14 +8,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import kusuri12.teens_be.global.error.exception.ErrorCode;
 import kusuri12.teens_be.global.error.exception.ErrorResponse;
 import kusuri12.teens_be.global.error.exception.TeensException;
+import kusuri12.teens_be.global.jwt.exception.ExpiredJwtException;
+import kusuri12.teens_be.global.jwt.exception.InvalidJwtException;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
+@Component
 @Slf4j
 @RequiredArgsConstructor
 public class GlobalExceptionFilter extends OncePerRequestFilter {
@@ -22,14 +27,27 @@ public class GlobalExceptionFilter extends OncePerRequestFilter {
     private final ObjectMapper mapper;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException {
+    protected void doFilterInternal(
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain chain) throws IOException {
         try {
             chain.doFilter(request, response);
+        } catch (ExpiredJwtException e) {
+            log.error("ExpiredJwtException catch : {}", e.getMessage());
+            responseWithErrorCode(response, ErrorCode.EXPIRED_JWT);
+            Sentry.captureException(e);
+        } catch (InvalidJwtException e) {
+            log.error("InvalidJwtException catch : {}", e.getMessage());
+            responseWithErrorCode(response, ErrorCode.INVALID_JWT);
+            Sentry.captureException(e);
         } catch (TeensException e) {
             log.error("Handled TeensException : ", e);
+            responseWithErrorCode(response, e.getErrorCode());
             Sentry.captureException(e);
         } catch (Exception e) {
             log.error("Unhandled Exception : ", e);
+            responseWithErrorCode(response, ErrorCode.INTERNAL_SERVER_ERROR);
             Sentry.captureException(e);
         }
     }
