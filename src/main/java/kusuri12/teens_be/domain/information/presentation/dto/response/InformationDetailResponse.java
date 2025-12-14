@@ -7,10 +7,11 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class InfoArticleListResponse {
+public class InformationDetailResponse {
     private Long id;
     private String title;
+    private String content;
     private String authorName;
     private LocalDateTime createdAt;
-    private boolean pinned;
+    private String imageUrl;
 }

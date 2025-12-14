@@ -22,14 +22,13 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class ForumService {
 
     private final ForumRepository forumRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
-    private Long userId;
 
+    @Transactional
     public List<ForumListResponse> getAllForums() {
         List<Forum> forums = forumRepository.findAllOrderByCreatedAtDesc();
 
@@ -44,6 +43,22 @@ public class ForumService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public List<ForumListResponse> searchForums(String keyword) {
+        List<Forum> forums = forumRepository.searchByKeyword(keyword);
+
+        return forums.stream()
+                .map(forum -> ForumListResponse.builder()
+                        .id(forum.getId())
+                        .title(forum.getTitle())
+                        .authorName(forum.getUser().getNickname())
+                        .createdAt(forum.getCreatedAt())
+                        .commentCount(commentRepository.countByForumId(forum.getId()))
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
     public ForumDetailResponse getForumDetail(Long forumId) {
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> ForumNotFoundException.EXCEPTION);
@@ -69,7 +84,8 @@ public class ForumService {
                 .build();
     }
 
-    public void createForum(CreateForumRequest request) {
+    @Transactional
+    public void createForum(Long userId, CreateForumRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> UserNotFoundException.EXCEPTION);
 
@@ -81,10 +97,10 @@ public class ForumService {
 
         forumRepository.save(forum);
 
-        // ForumCount 증가
         user.increaseForumCount();
     }
 
+    @Transactional
     public void updateForum(Long forumId, UpdateForumRequest request) {
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> ForumNotFoundException.EXCEPTION);
@@ -92,11 +108,11 @@ public class ForumService {
         forum.updateTitleAndContent(request.getTitle(), request.getContent());
     }
 
+    @Transactional
     public void deleteForum(Long forumId) {
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> ForumNotFoundException.EXCEPTION);
 
-        // ForumCount 감소
         User user = forum.getUser();
         user.decreaseForumCount();
 

@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class CommentService {
 
     private final CommentRepository commentRepository;
@@ -25,8 +24,9 @@ public class CommentService {
     private final UserRepository userRepository;
     private Long forumId;
 
-    public void createComment(Long userId, CreateCommentRequest request) {
-        Forum forum = forumRepository.findById(forumId)
+    @Transactional
+    public void createComment(Long userId, Long forumId, CreateCommentRequest request) {
+        Forum forum = forumRepository.findById(this.forumId)
                 .orElseThrow(() -> ForumNotFoundException.EXCEPTION);
 
         User user = userRepository.findById(userId)
@@ -44,6 +44,7 @@ public class CommentService {
         user.increaseCommentCount();
     }
 
+    @Transactional
     public void updateComment(Long commentId, UpdateCommentRequest request) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> CommentNotFoundException.EXCEPTION);
@@ -51,6 +52,7 @@ public class CommentService {
         comment.updateContent(request.getContent());
     }
 
+    @Transactional
     public void deleteComment(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> CommentNotFoundException.EXCEPTION);

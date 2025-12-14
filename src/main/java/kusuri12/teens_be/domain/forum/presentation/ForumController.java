@@ -8,9 +8,11 @@ import kusuri12.teens_be.domain.forum.presentation.dto.request.UpdateForumReques
 import kusuri12.teens_be.domain.forum.presentation.dto.response.ForumDetailResponse;
 import kusuri12.teens_be.domain.forum.presentation.dto.response.ForumListResponse;
 import kusuri12.teens_be.domain.forum.service.ForumService;
+import kusuri12.teens_be.global.auth.AuthDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +26,11 @@ public class ForumController {
     private final CommentService commentService;
 
     @GetMapping
-    public ResponseEntity<List<ForumListResponse>> getAllForums() {
+    public ResponseEntity<List<ForumListResponse>> getAllForums(
+            @RequestParam(required = false) String keyword) {
+        if (keyword != null && !keyword.isEmpty()) {
+            return ResponseEntity.ok(forumService.searchForums(keyword));
+        }
         return ResponseEntity.ok(forumService.getAllForums());
     }
 
@@ -34,47 +40,52 @@ public class ForumController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createForum(@RequestBody CreateForumRequest request) {
-        forumService.createForum(request);
+    public ResponseEntity<Void> createForum(
+            @AuthenticationPrincipal AuthDetails authDetails,
+            @RequestBody CreateForumRequest request) {
+        Long userId = authDetails.getId();
+        forumService.createForum(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PutMapping("/{forumId}")
+    @PutMapping("/{forum_id}")
     public ResponseEntity<Void> updateForum(
-            @PathVariable Long forumId,
+            @PathVariable Long forum_id,
             @RequestBody UpdateForumRequest request) {
-        forumService.updateForum(forumId, request);
+        forumService.updateForum(forum_id, request);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{forumId}")
-    public ResponseEntity<Void> deleteForum(@PathVariable Long forumId) {
-        forumService.deleteForum(forumId);
+    @DeleteMapping("/{forum_id}")
+    public ResponseEntity<Void> deleteForum(@PathVariable Long forum_id) {
+        forumService.deleteForum(forum_id);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{forumId}/comments")
+    @PostMapping("/{forum_id}/comment")
     public ResponseEntity<Void> createComment(
-            @PathVariable Long forumId,
+            @AuthenticationPrincipal AuthDetails authDetails,
+            @PathVariable Long forum_id,
             @RequestBody CreateCommentRequest request) {
-        commentService.createComment(forumId, request);
+        Long userId = authDetails.getId();
+        commentService.createComment(userId, forum_id    , request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PutMapping("/{forumId}/comments/{commentId}")
+    @PutMapping("/{forum_id}/comment/{comment_id}")
     public ResponseEntity<Void> updateComment(
-            @PathVariable Long forumId,
-            @PathVariable Long commentId,
+            @PathVariable Long forum_id,
+            @PathVariable Long comment_id,
             @RequestBody UpdateCommentRequest request) {
-        commentService.updateComment(commentId, request);
+        commentService.updateComment(comment_id, request);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{forumId}/comments/{commentId}")
+    @DeleteMapping("/{forum_id}/comment/{comment_id}")
     public ResponseEntity<Void> deleteComment(
-            @PathVariable Long forumId,
-            @PathVariable Long commentId) {
-        commentService.deleteComment(commentId);
+            @PathVariable Long forum_id,
+            @PathVariable Long comment_id) {
+        commentService.deleteComment(comment_id);
         return ResponseEntity.noContent().build();
     }
 }
