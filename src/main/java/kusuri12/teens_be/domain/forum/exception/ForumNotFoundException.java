@@ -7,5 +7,7 @@ public class ForumNotFoundException extends TeensException {
 
     public static final TeensException EXCEPTION = new ForumNotFoundException();
 
-    private ForumNotFoundException() { super(ErrorCode.FORUM_NOT_FOUND); }
+    private ForumNotFoundException() {
+        super(ErrorCode.FORUM_NOT_FOUND);
+    }
 }

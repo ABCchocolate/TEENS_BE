@@ -3,6 +3,7 @@ package kusuri12.teens_be.global.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import kusuri12.teens_be.domain.auth.domain.RefreshToken;
 import kusuri12.teens_be.domain.auth.domain.repository.RefreshTokenRepository;
 import kusuri12.teens_be.domain.user.domain.User;
@@ -103,6 +104,15 @@ public class JwtTokenProvider {
         }
     }
 
+    public boolean validateToken(String token) {
+        try {
+            parse(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public String reissueAccessToken(String refreshToken) {
         String username = getUsername(refreshToken);
         RefreshToken storedToken = refreshTokenRepository.findByToken(refreshToken);
@@ -168,5 +178,37 @@ public class JwtTokenProvider {
             return remainTimeMillis / 1000;
         }
         return 0;
+    }
+
+    // Jwt 추출 메서드
+    public String getJwt(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+
+        if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
+            return null;
+        }
+
+        return bearerToken.substring(7);
+    }
+
+    // redis 관련
+
+    public boolean isBlackList(String accessToken) {
+        return redisService.get("BlackList:" + accessToken) != null;
+    }
+
+    public void addToBlackList(String accessToken, String username, long expiration) {
+        String blackListKey = "BlackList:" + accessToken;
+        redisService.set(blackListKey, username, expiration);
+    }
+
+    public void deleteRefreshToken(String username) {
+        // 키 생성 규칙(RT:) 및 Redis 접근 로직을 Provider가 캡슐화
+        redisService.delete("RT:" + username);
+    }
+
+    public void saveRefreshToken(String username, String refreshToken) {
+        String key = "RT:" + username;
+        redisService.set(key, refreshToken, refreshTokenExpiration);
     }
 }
