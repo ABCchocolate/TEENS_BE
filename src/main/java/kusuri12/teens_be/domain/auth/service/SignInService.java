@@ -24,8 +24,10 @@ public class SignInService {
         );
 
         AuthDetails authDetails = (AuthDetails) authentication.getPrincipal();
+
         String accessToken = jwtTokenProvider.generateAccessToken(authDetails);
         String refreshToken = jwtTokenProvider.generateRefreshToken(authDetails);
+        jwtTokenProvider.saveRefreshToken(authDetails.getUsername(), refreshToken);
 
         return new SignInResponse(accessToken, refreshToken, authDetails);
     }

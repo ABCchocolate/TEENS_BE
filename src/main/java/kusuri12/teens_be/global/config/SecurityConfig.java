@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -31,6 +32,18 @@ public class SecurityConfig {
     private final GlobalExceptionFilter globalExceptionFilter;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    public static final String[] PERMITTED_AUTH = {
+            "/auth/sign-up/**",
+            "/auth/sign-in/**",
+            "/auth/check-id/**",
+            "/auth/refresh/**",
+            "/auth/verify-email/**",
+
+            "/swagger-ui.html",
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
+    };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -47,13 +60,7 @@ public class SecurityConfig {
                         .accessDeniedHandler(customAccessDeniedHandler))
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/auth/sign-up/**",
-                                "/auth/sign-in/**",
-                                "/auth/check-id/**",
-                                "/auth/refresh/**",
-                                "/auth/verify-email/**"
-                                ).permitAll()
+                        .requestMatchers(PERMITTED_AUTH).permitAll()
 
                         .requestMatchers(
                                 "/auth/sign-out",
@@ -66,7 +73,7 @@ public class SecurityConfig {
                         .requestMatchers("/information/**").hasRole("ADMIN")
                         .anyRequest().hasRole("USER"))
 
-                .addFilterBefore(globalExceptionFilter, LogoutFilter.class)
+                .addFilterBefore(globalExceptionFilter, CorsFilter.class)
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
