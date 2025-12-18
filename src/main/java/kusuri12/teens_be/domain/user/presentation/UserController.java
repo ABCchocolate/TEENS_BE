@@ -51,9 +51,9 @@ public class UserController {
     @PutMapping("/profile-image")
     public ResponseEntity<Void> uploadProfileImg(
             @AuthenticationPrincipal AuthDetails authDetails,
-            @RequestPart MultipartFile file) {
+            @RequestPart MultipartFile image) {
         Long id = authDetails.getId();
-        String imgUrl = s3UploadService.upload(file, "user/profiles/");
+        String imgUrl = s3UploadService.upload(image, "user/profiles/");
 
         userMypageService.uploadProfileImg(imgUrl, id);
         return ResponseEntity.noContent().build();

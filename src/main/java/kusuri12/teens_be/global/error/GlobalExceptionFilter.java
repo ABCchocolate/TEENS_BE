@@ -36,15 +36,12 @@ public class GlobalExceptionFilter extends OncePerRequestFilter {
         } catch (ExpiredJwtException e) {
             log.error("ExpiredJwtException catch : {}", e.getMessage());
             responseWithErrorCode(response, ErrorCode.EXPIRED_JWT);
-            Sentry.captureException(e);
         } catch (InvalidJwtException e) {
             log.error("InvalidJwtException catch : {}", e.getMessage());
             responseWithErrorCode(response, ErrorCode.INVALID_JWT);
-            Sentry.captureException(e);
         } catch (TeensException e) {
             log.error("Handled TeensException : ", e);
             responseWithErrorCode(response, e.getErrorCode());
-            Sentry.captureException(e);
         } catch (Exception e) {
             log.error("Unhandled Exception : ", e);
             responseWithErrorCode(response, ErrorCode.INTERNAL_SERVER_ERROR);

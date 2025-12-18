@@ -4,8 +4,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
 public class TeensException extends RuntimeException {
 
     private final ErrorCode errorCode;
+
+    public TeensException(ErrorCode errorCode) {
+        super(errorCode.getMessage());
+        this.errorCode = errorCode;
+    }
 }

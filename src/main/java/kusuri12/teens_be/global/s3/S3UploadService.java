@@ -4,6 +4,7 @@ import kusuri12.teens_be.global.s3.exception.BadFileExtensionException;
 import kusuri12.teens_be.global.s3.exception.EmptyFileException;
 import kusuri12.teens_be.global.s3.exception.FailUploadImageException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +22,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class S3UploadService {
 
     private final S3Client s3Client;
@@ -59,8 +61,7 @@ public class S3UploadService {
                     .build();
 
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-            return generatePresignedUrl(fileKey);
-
+            return fileKey;
         } catch (Exception e) {
             throw new FailUploadImageException(e);
         }
@@ -83,10 +84,10 @@ public class S3UploadService {
         return presignedObject.url().toString();
     }
 
-    public void delete(String fileName, String path) {
-        String fileKey = path + fileName;
-
+    public void delete(String fileUrl) {
         try {
+            String fileKey = fileUrl.substring(fileUrl.lastIndexOf(".com") + 1);
+
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                     .bucket(bucket)
                     .key(fileKey)
@@ -97,10 +98,9 @@ public class S3UploadService {
             if ("NoSuchKey".equals(e.awsErrorDetails().errorCode())) {
                 return;
             }
-            throw new FailUploadImageException(e);
-
+            log.error("S3 파일 삭제 실패: {}", e.getMessage());
         } catch (Exception e) {
-            throw new FailUploadImageException(e);
+            log.error("S3 파일 삭제 실패: {}", e.getMessage());
         }
     }
 }

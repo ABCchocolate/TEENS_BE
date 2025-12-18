@@ -42,7 +42,7 @@ public class User {
     @Column(nullable = false)
     private int commentCount = 0;
 
-    @Column
+    @Column(length = 1024)
     private String profileImg;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)

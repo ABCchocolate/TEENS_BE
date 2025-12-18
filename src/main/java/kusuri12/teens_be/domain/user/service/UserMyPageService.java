@@ -10,6 +10,7 @@ import kusuri12.teens_be.domain.user.exception.UserNotFoundException;
 import kusuri12.teens_be.domain.user.presentation.dto.request.NicknameRequest;
 import kusuri12.teens_be.domain.user.presentation.dto.request.PasswordRequest;
 import kusuri12.teens_be.domain.user.presentation.dto.response.UserMeResponse;
+import kusuri12.teens_be.global.s3.S3UploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class UserMyPageService {
     private final ForumRepository forumRepository;
     private final CommentRepository commentRepository;
     private final PasswordEncoder encoder;
+    private final S3UploadService s3UploadService;
 
     @Transactional(readOnly = true)
     public UserMeResponse getUserMe(Long id) {
@@ -32,12 +34,19 @@ public class UserMyPageService {
         int forumCount = forumRepository.countByUser_Id(id);
         int commentCount = commentRepository.countByUserId(id);
 
+        // DB에 저장된 fileKey를 꺼내서 임시 보안 URL 생성
+        String profileImage = null;
+        if (user.getProfileImg() != null) {
+            profileImage = s3UploadService.generatePresignedUrl(user.getProfileImg());
+        }
+
         return UserMeResponse.builder()
                 .username(user.getUsername())
                 .nickname(user.getNickname())
                 .email(user.getEmail())
                 .forumCount(forumCount)
                 .commentCount(commentCount)
+                .profileImg(profileImage)
                 .build();
     }
 
@@ -70,6 +79,10 @@ public class UserMyPageService {
     public void uploadProfileImg(String profileImg, Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> UserNotFoundException.EXCEPTION);
+
+        if (user.getProfileImg() != null && !user.getProfileImg().isEmpty()) {
+            s3UploadService.delete(user.getProfileImg());
+        }
 
         user.updateProfileImg(profileImg);
     }
