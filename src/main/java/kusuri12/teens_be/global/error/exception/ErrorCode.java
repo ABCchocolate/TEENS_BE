@@ -17,6 +17,7 @@ public enum ErrorCode {
     FILE_IS_EMPTY(HttpStatus.BAD_REQUEST, "파일이 존재하지 않습니다"),
     BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "잘못된 파일 확장자입니다"),
     MAX_UPLOAD_FILE(HttpStatus.BAD_REQUEST, "최대 업로드 파일 크기를 초과했습니다"),
+    REQUEST_NOT_READABLE(HttpStatus.BAD_REQUEST, "요청 본문의 형식이 잘못되었습니다."),
 
     EXPIRED_JWT(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
     INVALID_JWT(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),

@@ -38,7 +38,7 @@ public class AuthController {
     }
 
     @GetMapping("/check-id")
-    public ResponseEntity<CheckIdResponse> checkId(@RequestParam CheckIdRequest request) {
+    public ResponseEntity<CheckIdResponse> checkId(@ModelAttribute CheckIdRequest request) {
         return ResponseEntity.ok(checkIdService.checkId(request));
     }
 

@@ -1,6 +1,8 @@
 package kusuri12.teens_be.global.config;
 
 import kusuri12.teens_be.global.error.GlobalExceptionFilter;
+import kusuri12.teens_be.global.error.handler.CustomAccessDeniedHandler;
+import kusuri12.teens_be.global.error.handler.CustomAuthenticationEntryPoint;
 import kusuri12.teens_be.global.jwt.JwtTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -26,6 +29,20 @@ public class SecurityConfig {
 
     private final JwtTokenFilter jwtTokenFilter;
     private final GlobalExceptionFilter globalExceptionFilter;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    public static final String[] PERMITTED_AUTH = {
+            "/auth/sign-up/**",
+            "/auth/sign-in/**",
+            "/auth/check-id/**",
+            "/auth/refresh/**",
+            "/auth/verify-email/**",
+
+            "/swagger-ui.html",
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
+    };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -37,20 +54,25 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+                .exceptionHandling(handling -> handling
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler))
+
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(PERMITTED_AUTH).permitAll()
+
                         .requestMatchers(
-                                "/auth/sign-up/**",
-                                "/auth/sign-in/**",
-                                "/auth/check-id/**",
-                                "/auth/refresh/**",
-                                "/auth/verify-email/**"
-                                ).permitAll()
+                                "/auth/sign-out",
+                                "/auth/quit"
+                                ).authenticated()
 
                         .requestMatchers(HttpMethod.GET, "/forum/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/info-article/**").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers(HttpMethod.GET, "/information/**").permitAll()
+                        .requestMatchers("/forum/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/information/**").hasRole("ADMIN")
+                        .anyRequest().hasRole("USER"))
 
-                .addFilterBefore(globalExceptionFilter, JwtTokenFilter.class)
+                .addFilterBefore(globalExceptionFilter, CorsFilter.class)
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
