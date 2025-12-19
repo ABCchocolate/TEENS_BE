@@ -71,7 +71,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             String username = claims.getSubject();
             Long userId = claims.get("userId", Long.class);
             String authoritiesStr = claims.get("authorities", String.class);
-
+//            System.out.println(authoritiesStr);
             // ACCESS 토큰이고 필수 클레임이 존재할 경우
             if ("ACCESS".equals(tokenType) && username != null && userId != null) {
 

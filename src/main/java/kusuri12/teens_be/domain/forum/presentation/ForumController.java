@@ -34,9 +34,9 @@ public class ForumController {
         return ResponseEntity.ok(forumService.getAllForums());
     }
 
-    @GetMapping("/{forumId}")
-    public ResponseEntity<ForumDetailResponse> getForumDetail(@PathVariable Long forumId) {
-        return ResponseEntity.ok(forumService.getForumDetail(forumId));
+    @GetMapping("/{forum_id}")
+    public ResponseEntity<ForumDetailResponse> getForumDetail(@PathVariable Long forum_id) {
+        return ResponseEntity.ok(forumService.getForumDetail(forum_id));
     }
 
     @PostMapping
@@ -67,8 +67,9 @@ public class ForumController {
             @AuthenticationPrincipal AuthDetails authDetails,
             @PathVariable Long forum_id,
             @RequestBody CreateCommentRequest request) {
+//        System.out.println(forum_id);
         Long userId = authDetails.getId();
-        commentService.createComment(userId, forum_id    , request);
+        commentService.createComment(userId, forum_id, request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

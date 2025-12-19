@@ -20,7 +20,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
@@ -69,7 +68,7 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/forum/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/information/**").permitAll()
-                        .requestMatchers("/forum/**").hasRole("USER")
+                        .requestMatchers("/forum/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/information/**").hasRole("ADMIN")
                         .anyRequest().hasRole("USER"))
 
