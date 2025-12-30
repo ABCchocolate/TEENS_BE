@@ -2,14 +2,14 @@ package kusuri12.teens_be.domain.auth.presentation;
 
 import jakarta.validation.Valid;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.CheckIdRequest;
-import kusuri12.teens_be.domain.auth.presentation.dto.request.RefreshTokenRequest;
+import kusuri12.teens_be.domain.auth.presentation.dto.request.ReissueRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.SignInRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.SignUpRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.response.CheckIdResponse;
 import kusuri12.teens_be.domain.auth.presentation.dto.response.SignInResponse;
-import kusuri12.teens_be.domain.auth.presentation.dto.response.TokenResponse;
 import kusuri12.teens_be.domain.auth.service.*;
 import kusuri12.teens_be.global.auth.AuthDetails;
+import kusuri12.teens_be.global.jwt.JwtTokens;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -61,8 +61,8 @@ public class AuthController {
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<TokenResponse> reissue(
-            @RequestBody RefreshTokenRequest request) {
+    public ResponseEntity<JwtTokens> reissue(
+            @RequestBody ReissueRequest request) {
         return ResponseEntity.ok(reissueService.reissue(request));
     }
 }

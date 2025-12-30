@@ -14,7 +14,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_NAME:teens}?allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=UTF-8&useUnicode=true&connectionCollation=utf8mb4_general_ci
-    username: root
+    username: ${DB_USERNAME:root}
     password: ${PASSWORD}
 
   data:

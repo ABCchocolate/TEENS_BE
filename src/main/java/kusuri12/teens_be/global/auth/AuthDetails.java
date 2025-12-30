@@ -52,6 +52,7 @@ public class AuthDetails implements UserDetails {
         this.forumCount = user.getForumCount();
         this.commentCount = user.getCommentCount();
         this.profileImg = user.getProfileImg();
+
         List<GrantedAuthority> authList = new ArrayList<>();
         authList.add(new SimpleGrantedAuthority("ROLE_" + role));
         this.authorities = authList;

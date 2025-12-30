@@ -5,6 +5,7 @@ import kusuri12.teens_be.domain.auth.presentation.dto.request.SignInRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.response.SignInResponse;
 import kusuri12.teens_be.global.auth.AuthDetails;
 import kusuri12.teens_be.global.jwt.JwtTokenProvider;
+import kusuri12.teens_be.global.jwt.JwtTokens;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,10 +26,8 @@ public class SignInService {
 
         AuthDetails authDetails = (AuthDetails) authentication.getPrincipal();
 
-        String accessToken = jwtTokenProvider.generateAccessToken(authDetails);
-        String refreshToken = jwtTokenProvider.generateRefreshToken(authDetails);
-        jwtTokenProvider.saveRefreshToken(authDetails.getUsername(), refreshToken);
+        JwtTokens jwtTokens = jwtTokenProvider.generateToken(authDetails);
 
-        return new SignInResponse(accessToken, refreshToken, authDetails);
+        return new SignInResponse(jwtTokens.accessToken(), jwtTokens.refreshToken(), authDetails);
     }
 }

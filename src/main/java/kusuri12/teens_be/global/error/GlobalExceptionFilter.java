@@ -1,30 +1,26 @@
 package kusuri12.teens_be.global.error;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.sentry.Sentry;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kusuri12.teens_be.global.error.exception.ErrorCode;
-import kusuri12.teens_be.global.error.exception.ErrorResponse;
+import kusuri12.teens_be.global.error.exception.ResponseWithErrorCode;
 import kusuri12.teens_be.global.error.exception.TeensException;
-import kusuri12.teens_be.global.jwt.exception.ExpiredJwtException;
-import kusuri12.teens_be.global.jwt.exception.InvalidJwtException;
+import kusuri12.teens_be.global.jwt.exception.ExpiredTokenException;
+import kusuri12.teens_be.global.jwt.exception.InvalidTokenException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@Component
 @Slf4j
 @RequiredArgsConstructor
 public class GlobalExceptionFilter extends OncePerRequestFilter {
 
-    private final ObjectMapper mapper;
+    private final ResponseWithErrorCode responseWithErrorCode;
 
     @Override
     protected void doFilterInternal(
@@ -33,30 +29,19 @@ public class GlobalExceptionFilter extends OncePerRequestFilter {
             @NonNull FilterChain chain) throws IOException {
         try {
             chain.doFilter(request, response);
-        } catch (ExpiredJwtException e) {
+        } catch (ExpiredTokenException e) {
             log.error("ExpiredJwtException catch : {}", e.getMessage());
-            responseWithErrorCode(response, ErrorCode.EXPIRED_JWT);
-        } catch (InvalidJwtException e) {
+            responseWithErrorCode.response(response, ErrorCode.EXPIRED_JWT);
+        } catch (InvalidTokenException e) {
             log.error("InvalidJwtException catch : {}", e.getMessage());
-            responseWithErrorCode(response, ErrorCode.INVALID_JWT);
+            responseWithErrorCode.response(response, ErrorCode.INVALID_JWT);
         } catch (TeensException e) {
             log.error("Handled TeensException : ", e);
-            responseWithErrorCode(response, e.getErrorCode());
+            responseWithErrorCode.response(response, e.getErrorCode());
         } catch (Exception e) {
             log.error("Unhandled Exception : ", e);
-            responseWithErrorCode(response, ErrorCode.INTERNAL_SERVER_ERROR);
+            responseWithErrorCode.response(response, ErrorCode.INTERNAL_SERVER_ERROR);
             Sentry.captureException(e);
         }
-    }
-
-    private void responseWithErrorCode(HttpServletResponse response, ErrorCode errorCode) throws IOException {
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .status(errorCode.getStatus())
-                .message(errorCode.getMessage())
-                .build();
-
-        response.setStatus(errorCode.getStatus().value());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        mapper.writeValue(response.getOutputStream(), errorResponse);
     }
 }
