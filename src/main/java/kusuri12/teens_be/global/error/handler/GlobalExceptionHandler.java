@@ -57,7 +57,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpHeaders headers,
             HttpStatusCode status,
             WebRequest request) {
-
         log.error("HttpMessageNotReadableException: {}", ex.getMessage());
 
         ErrorCode errorCode = ErrorCode.REQUEST_NOT_READABLE;
@@ -74,6 +73,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponse> handleTeensException(TeensException e) {
         log.error("TeensException: {}", e.getMessage());
 
+
         ErrorCode errorCode = e.getErrorCode();
         ErrorResponse response = ErrorResponse.builder()
                 .status(errorCode.getStatus())
@@ -88,7 +88,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     // Security 관련 인증 실패 처리
     @ExceptionHandler({BadCredentialsException.class, UsernameNotFoundException.class})
     public ResponseEntity<ErrorResponse> handleAuthenticationException(Exception e) {
-        log.error("Authentication Exception: {}", e.getMessage());
+        log.warn("Login Failed: {}", e.getMessage());
 
         ErrorCode errorCode = ErrorCode.INVALID_CREDENTIALS;
         ErrorResponse response = ErrorResponse.builder()

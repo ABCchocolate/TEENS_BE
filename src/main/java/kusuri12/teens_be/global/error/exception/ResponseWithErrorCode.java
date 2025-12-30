@@ -1,0 +1,35 @@
+package kusuri12.teens_be.global.error.exception;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+
+@Component
+@RequiredArgsConstructor
+@Slf4j
+public class ResponseWithErrorCode {
+
+    private final ObjectMapper mapper;
+
+    public void response(HttpServletResponse response, ErrorCode errorCode) throws IOException {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status(errorCode.getStatus())
+                .message(errorCode.getMessage())
+                .build();
+
+        response.setStatus(errorCode.getStatus().value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        try {
+            String jsonResponse = mapper.writeValueAsString(errorResponse);
+            response.getWriter().write(jsonResponse);
+        } catch (Exception e) {
+            log.error("Error occurred while writing response: {}", e.getMessage());
+            throw e;
+        }
+    }
+}

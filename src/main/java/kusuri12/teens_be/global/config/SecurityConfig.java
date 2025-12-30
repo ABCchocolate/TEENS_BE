@@ -1,26 +1,27 @@
 package kusuri12.teens_be.global.config;
 
 import kusuri12.teens_be.global.error.GlobalExceptionFilter;
+import kusuri12.teens_be.global.error.exception.ResponseWithErrorCode;
 import kusuri12.teens_be.global.error.handler.CustomAccessDeniedHandler;
 import kusuri12.teens_be.global.error.handler.CustomAuthenticationEntryPoint;
 import kusuri12.teens_be.global.jwt.JwtTokenFilter;
+import kusuri12.teens_be.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
@@ -28,8 +29,8 @@ import org.springframework.web.filter.CorsFilter;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtTokenFilter jwtTokenFilter;
-    private final GlobalExceptionFilter globalExceptionFilter;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final ResponseWithErrorCode responseWithErrorCode;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
@@ -37,8 +38,7 @@ public class SecurityConfig {
             "/auth/sign-up/**",
             "/auth/sign-in/**",
             "/auth/check-id/**",
-            "/auth/refresh/**",
-            "/auth/verify-email/**",
+            "/auth/reissue",
 
             "/swagger-ui.html",
             "/v3/api-docs/**",
@@ -49,7 +49,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(CsrfConfigurer::disable)
-                .cors(CorsConfigurer::disable)
+                .cors(Customizer.withDefaults())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
@@ -73,8 +73,8 @@ public class SecurityConfig {
                         .requestMatchers("/information/**").hasRole("ADMIN")
                         .anyRequest().hasRole("USER"))
 
-                .addFilterBefore(globalExceptionFilter, CorsFilter.class)
-                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(globalExceptionFilter(), CorsFilter.class)
+                .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
@@ -88,5 +88,15 @@ public class SecurityConfig {
         // 인증 처리를 위한 AuthenticationManager를 Bean 등록
         // 주로 로그인 시도 시 사용자 인증 로직에 사용됨
         return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public GlobalExceptionFilter globalExceptionFilter() {
+        return new GlobalExceptionFilter(responseWithErrorCode);
+    }
+
+    @Bean
+    public JwtTokenFilter jwtTokenFilter() {
+        return new JwtTokenFilter(jwtTokenProvider);
     }
 }
