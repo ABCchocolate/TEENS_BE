@@ -69,7 +69,7 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/forum/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/information/**").permitAll()
-                        .requestMatchers("/forum/**").hasRole("USER")
+                        .requestMatchers("/forum/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/information/**").hasRole("ADMIN")
                         .anyRequest().hasRole("USER"))
 

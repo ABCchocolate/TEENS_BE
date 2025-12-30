@@ -30,32 +30,33 @@ public class InformationController {
         return ResponseEntity.ok(infoArticleService.getAllInfoArticles());
     }
 
-    @GetMapping("/{information_Id}")
+    @GetMapping("/{information_id}")
     public ResponseEntity<InformationDetailResponse> getInfoArticleDetail(
-            @PathVariable Long information_Id) {
-        return ResponseEntity.ok(infoArticleService.getInfoArticleDetail(information_Id));
+            @PathVariable Long information_id) {
+        return ResponseEntity.ok(infoArticleService.getInfoArticleDetail(information_id));
     }
 
     @PostMapping
     public ResponseEntity<Void> createInfoArticle(
             @AuthenticationPrincipal AuthDetails authDetails,
             @RequestBody CreateInformationRequest request) {
+//        System.out.println("createInfoArticle");
         Long userId = authDetails.getId();
         infoArticleService.createInfoArticle(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PutMapping("/{information_Id}")
+    @PutMapping("/{information_id}")
     public ResponseEntity<Void> updateInfoArticle(
-            @PathVariable Long information_Id,
+            @PathVariable Long information_id,
             @RequestBody UpdateInformationRequest request) {
-        infoArticleService.updateInfoArticle(information_Id, request);
+        infoArticleService.updateInfoArticle(information_id, request);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{information_Id}")
-    public ResponseEntity<Void> deleteInfoArticle(@PathVariable Long information_Id) {
-        infoArticleService.deleteInfoArticle(information_Id);
+    @DeleteMapping("/{information_id}")
+    public ResponseEntity<Void> deleteInfoArticle(@PathVariable Long information_id) {
+        infoArticleService.deleteInfoArticle(information_id);
         return ResponseEntity.noContent().build();
     }
 }

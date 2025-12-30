@@ -26,7 +26,7 @@ public class CommentService {
 
     @Transactional
     public void createComment(Long userId, Long forumId, CreateCommentRequest request) {
-        Forum forum = forumRepository.findById(this.forumId)
+        Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> ForumNotFoundException.EXCEPTION);
 
         User user = userRepository.findById(userId)
