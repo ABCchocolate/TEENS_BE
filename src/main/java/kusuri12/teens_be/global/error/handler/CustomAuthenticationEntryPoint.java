@@ -19,10 +19,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     private final ResponseWithErrorCode responseWithErrorCode;
 
     @Override
-    public void commence(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            AuthenticationException authException) throws IOException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
 
         log.warn("Unauthorized Access Attempt: {}", authException.getMessage());
         log.warn("Request URI: {}", request.getRequestURI());

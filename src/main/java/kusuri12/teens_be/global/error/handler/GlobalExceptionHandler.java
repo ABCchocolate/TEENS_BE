@@ -1,5 +1,6 @@
 package kusuri12.teens_be.global.error.handler;
 
+import io.micrometer.common.lang.NonNullApi;
 import io.sentry.Sentry;
 import kusuri12.teens_be.global.error.exception.ErrorCode;
 import kusuri12.teens_be.global.error.exception.ErrorResponse;
@@ -21,8 +22,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
 @RestControllerAdvice
+@Slf4j
+@NonNullApi
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     // @Valid 검증 실패 처리

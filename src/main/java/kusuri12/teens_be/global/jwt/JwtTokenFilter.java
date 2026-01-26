@@ -84,7 +84,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
             chain.doFilter(request, response);
         } catch (ExpiredTokenException e) {
-            throw ExpiredTokenException.EXCEPTION;
+            throw new ExpiredTokenException();
         } catch (InvalidTokenException e) {
             throw InvalidTokenException.EXCEPTION;
         }
