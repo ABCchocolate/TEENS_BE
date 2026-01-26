@@ -6,7 +6,6 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
-import kusuri12.teens_be.domain.auth.domain.RefreshToken;
 import kusuri12.teens_be.domain.auth.domain.repository.RefreshTokenRepository;
 import kusuri12.teens_be.domain.user.domain.User;
 import kusuri12.teens_be.domain.user.domain.repository.UserRepository;
@@ -34,7 +33,6 @@ public class JwtTokenProvider {
     public JwtTokenProvider(
             JwtProperties jwtProperties,
             RedisService redisService,
-            RefreshTokenRepository refreshTokenRepository,
             UserRepository userRepository) {
         this.jwtProperties = jwtProperties;
         this.key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes());
@@ -93,7 +91,7 @@ public class JwtTokenProvider {
                     .parseSignedClaims(token)
                     .getPayload();
         } catch (ExpiredTokenException e){
-            throw ExpiredTokenException.EXCEPTION;
+            throw new ExpiredTokenException();
         } catch (JwtException | IllegalArgumentException e) {
             throw InvalidTokenException.EXCEPTION;
         }
