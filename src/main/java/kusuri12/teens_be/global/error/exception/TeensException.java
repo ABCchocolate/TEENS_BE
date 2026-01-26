@@ -1,7 +1,6 @@
 package kusuri12.teens_be.global.error.exception;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 public abstract class TeensException extends RuntimeException {
