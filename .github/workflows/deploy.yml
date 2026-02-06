@@ -12,29 +12,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # Java 17.0.18 강제 설정
+      # Java 17.0.18 강제
       - name: Set up JDK 17.0.18
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17.0.18'
-          cache: none
 
-      # Java 버전 확인 (반드시 17이어야 함)
+      # Java 버전 확인
       - name: Verify Java version
         run: java -version
 
-      # Gradle이 사용하는 JVM 확인 (중요)
+      # Gradle이 실제로 쓰는 JVM 확인 (중요)
       - name: Verify Gradle JVM version
         run: ./gradlew -version
 
-      # 빌드 (캐시 완전 차단)
+      # 빌드 (Gradle 캐시 사용 안 함)
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew
           ./gradlew clean build -x test --no-build-cache
 
-      # JAR EC2로 복사
+      # JAR 복사
       - name: Copy JAR to EC2
         uses: appleboy/scp-action@master
         with:
@@ -55,11 +54,8 @@ jobs:
           script: |
             APP_DIR=/home/ubuntu/app
             PID_FILE=$APP_DIR/app.pid
-
-            # 실행 가능한 JAR만 선택 (plain 제외)
             JAR_FILE=$(ls $APP_DIR/*.jar | grep -v plain | head -n 1)
 
-            # 기존 앱 종료
             if [ -f "$PID_FILE" ]; then
               PID=$(cat $PID_FILE)
               if ps -p $PID > /dev/null; then
@@ -69,7 +65,5 @@ jobs:
               rm -f $PID_FILE
             fi
 
-            # 앱 실행
             nohup java -jar $JAR_FILE > $APP_DIR/nohup.out 2>&1 &
-
             echo $! > $PID_FILE
