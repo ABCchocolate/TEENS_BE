@@ -42,7 +42,7 @@ jobs:
           script: |
             APP_DIR=/home/ubuntu/app
             PID_FILE=$APP_DIR/app.pid
-            JAR_FILE=$(ls $APP_DIR/*.jar | head -n 1)
+            JAR_FILE=$(ls $APP_DIR/*.jar | grep -v plain | head -n 1)
 
             echo "=== Stop existing application ==="
             if [ -f "$PID_FILE" ]; then
