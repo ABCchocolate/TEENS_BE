@@ -56,6 +56,7 @@ jobs:
           script: |
             APP_DIR=/home/ubuntu/app
             PID_FILE=$APP_DIR/app.pid
+            ENV_FILE=$APP_DIR/.env
             JAR_FILE=$(ls $APP_DIR/*.jar | grep -v plain | head -n 1)
             
             # 기존 프로세스 종료
@@ -69,9 +70,23 @@ jobs:
               rm -f $PID_FILE
             fi
             
-            # 새 애플리케이션 시작
-            echo "Starting application..."
-            nohup java -jar $JAR_FILE > $APP_DIR/nohup.out 2>&1 &
-            echo $! > $PID_FILE
+            # .env 파일 존재 확인
+            if [ ! -f "$ENV_FILE" ]; then
+              echo "Warning: .env file not found at $ENV_FILE"
+            fi
             
+            # .env 파일을 환경변수로 로드하여 애플리케이션 시작
+            echo "Starting application with .env file..."
+            if [ -f "$ENV_FILE" ]; then
+              # .env 파일의 내용을 export하여 환경변수로 설정
+              set -a
+              source $ENV_FILE
+              set +a
+              nohup java -jar $JAR_FILE > $APP_DIR/nohup.out 2>&1 &
+            else
+              # .env 파일이 없으면 그냥 실행
+              nohup java -jar $JAR_FILE > $APP_DIR/nohup.out 2>&1 &
+            fi
+            
+            echo $! > $PID_FILE
             echo "Application started with PID: $(cat $PID_FILE)"
