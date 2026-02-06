@@ -31,9 +31,6 @@ public class S3UploadService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    @Value("${cloud.aws.s3.exp-time}")
-    private String s3Exp;
-
     public String verifyFile(MultipartFile file) {
         if (file.isEmpty() || file.getOriginalFilename() == null) throw EmptyFileException.EXCEPTION;
 

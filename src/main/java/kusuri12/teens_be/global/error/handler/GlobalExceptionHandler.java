@@ -1,6 +1,6 @@
 package kusuri12.teens_be.global.error.handler;
 
-import io.sentry.Sentry;
+import io.micrometer.common.lang.NonNullApi;
 import kusuri12.teens_be.global.error.exception.ErrorCode;
 import kusuri12.teens_be.global.error.exception.ErrorResponse;
 import kusuri12.teens_be.global.error.exception.TeensException;
@@ -21,8 +21,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
 @RestControllerAdvice
+@Slf4j
+@NonNullApi
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     // @Valid 검증 실패 처리
@@ -35,9 +36,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("MethodArgumentNotValidException: {}", ex.getMessage());
 
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error -> {
-            errors.put(error.getField(), error.getDefaultMessage());
-        });
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+                errors.put(error.getField(), error.getDefaultMessage()));
 
         ErrorCode errorCode = ErrorCode.VALIDATION_FAILED;
         ErrorResponse response = ErrorResponse.builder()
@@ -105,7 +105,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
         log.error("Unexpected Exception: {}", e.getMessage());
-        Sentry.captureException(e);
 
         ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
         ErrorResponse response = ErrorResponse.builder()

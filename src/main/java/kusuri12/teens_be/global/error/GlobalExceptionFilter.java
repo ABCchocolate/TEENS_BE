@@ -1,6 +1,5 @@
 package kusuri12.teens_be.global.error;
 
-import io.sentry.Sentry;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,7 +40,6 @@ public class GlobalExceptionFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             log.error("Unhandled Exception : ", e);
             responseWithErrorCode.response(response, ErrorCode.INTERNAL_SERVER_ERROR);
-            Sentry.captureException(e);
         }
     }
 }
