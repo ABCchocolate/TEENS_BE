@@ -19,21 +19,23 @@ jobs:
           distribution: 'temurin'
           java-version: '17.0.18'
 
+      # gradlew 실행 권한 먼저 부여 (중요)
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
       # Java 버전 확인
       - name: Verify Java version
         run: java -version
 
-      # Gradle이 실제로 쓰는 JVM 확인 (중요)
+      # Gradle이 사용하는 JVM 확인
       - name: Verify Gradle JVM version
         run: ./gradlew -version
 
-      # 빌드 (Gradle 캐시 사용 안 함)
+      # 빌드 (Java 17로 강제, 캐시 사용 안 함)
       - name: Build with Gradle
-        run: |
-          chmod +x ./gradlew
-          ./gradlew clean build -x test --no-build-cache
+        run: ./gradlew clean build -x test --no-build-cache
 
-      # JAR 복사
+      # JAR EC2로 복사
       - name: Copy JAR to EC2
         uses: appleboy/scp-action@master
         with:
