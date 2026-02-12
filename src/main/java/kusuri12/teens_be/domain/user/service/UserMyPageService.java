@@ -37,7 +37,7 @@ public class UserMyPageService {
         // DB에 저장된 fileKey를 꺼내서 임시 보안 URL 생성
         String profileImage = null;
         if (user.getProfileImg() != null) {
-            profileImage = s3UploadService.generatePresignedUrl(user.getProfileImg());
+            profileImage = s3UploadService.getFileUrl(user.getProfileImg());
         }
 
         return UserMeResponse.builder()

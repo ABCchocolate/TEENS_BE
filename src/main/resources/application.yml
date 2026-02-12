@@ -2,30 +2,24 @@ spring:
   jpa:
     database: mysql
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${JPA_DDL_AUTO:validate}
     properties:
       hibernate:
         format_sql: true
         show_sql: false
-    database-platform: org.hibernate.dialect.MySQLDialect
     generate-ddl: true
     open-in-view: false
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_NAME:teens}?allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=UTF-8&useUnicode=true&connectionCollation=utf8mb4_general_ci
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_NAME:teens}
     username: ${DB_USERNAME:root}
-    password: ${PASSWORD}
+    password: ${DB_PASSWORD}
 
   data:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
-
-  autoconfigure:
-    exclude:
-      # S3 자동 설정을 완전히 비활성화하여 JPA/Hibernate 충돌을 방지합니다.
-      - io.awspring.cloud.autoconfigure.s3.S3AutoConfiguration
 
 server:
   port: ${PORT:8080}
@@ -37,10 +31,10 @@ jwt:
 
 cloud:
   aws:
-    credentials:
-      access-key: ${ACCESS_KEY}
-      secret-key: ${SECRET_KEY}
     s3:
       bucket: ${BUCKET_NAME}
+    credentials:
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
     region:
       static: ${AWS_STATIC}

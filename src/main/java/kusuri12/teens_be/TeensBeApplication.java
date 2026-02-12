@@ -1,12 +1,13 @@
 package kusuri12.teens_be;
 
 import kusuri12.teens_be.global.jwt.JwtProperties;
+import kusuri12.teens_be.global.s3.S3Properties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @SpringBootApplication
-@EnableConfigurationProperties(JwtProperties.class)
+@EnableConfigurationProperties({JwtProperties.class, S3Properties.class})
 public class TeensBeApplication {
 
     public static void main(String[] args) {

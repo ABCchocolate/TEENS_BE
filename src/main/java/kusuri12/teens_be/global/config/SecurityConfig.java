@@ -1,10 +1,10 @@
 package kusuri12.teens_be.global.config;
 
-import kusuri12.teens_be.global.error.GlobalExceptionFilter;
+import kusuri12.teens_be.global.error.filter.GlobalExceptionFilter;
 import kusuri12.teens_be.global.error.exception.ResponseWithErrorCode;
 import kusuri12.teens_be.global.error.handler.CustomAccessDeniedHandler;
 import kusuri12.teens_be.global.error.handler.CustomAuthenticationEntryPoint;
-import kusuri12.teens_be.global.jwt.JwtTokenFilter;
+import kusuri12.teens_be.global.error.filter.JwtTokenFilter;
 import kusuri12.teens_be.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

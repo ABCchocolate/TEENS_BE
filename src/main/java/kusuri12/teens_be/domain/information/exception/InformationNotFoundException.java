@@ -8,5 +8,5 @@ public class InformationNotFoundException extends TeensException {
 
     private InformationNotFoundException() {
       super(ErrorCode.INFO_ARTICLE_NOT_FOUND);
-  }
+    }
 }

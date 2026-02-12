@@ -1,4 +1,4 @@
-package kusuri12.teens_be.global.jwt;
+package kusuri12.teens_be.global.error.filter;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kusuri12.teens_be.global.auth.AuthDetails;
+import kusuri12.teens_be.global.jwt.JwtTokenProvider;
 import kusuri12.teens_be.global.jwt.exception.ExpiredTokenException;
 import kusuri12.teens_be.global.jwt.exception.InvalidTokenException;
 import lombok.NonNull;
