@@ -1,8 +1,8 @@
-package kusuri12.teens_be.global.s3;
+package kusuri12.teens_be.global.aws.s3;
 
-import kusuri12.teens_be.global.error.exception.GlobalErrorCode;
+import kusuri12.teens_be.global.aws.AwsProperties;
+import kusuri12.teens_be.global.aws.exception.AwsErrorCode;
 import kusuri12.teens_be.global.error.exception.TeensException;
-import kusuri12.teens_be.global.s3.exception.FailUploadImageException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,9 +20,9 @@ import java.util.UUID;
 public class S3UploadService {
 
     private final S3Client s3Client;
-    private final S3Properties s3Properties;
+    private final AwsProperties awsProperties;
     private final S3FileValidator s3FileValidator;
-    private final String bucket = s3Properties.getS3().bucket();
+    private final String bucket = awsProperties.getS3().bucket();
 
     public String upload(MultipartFile file, String path) {
         String ext = s3FileValidator.verifyImageFile(file);
@@ -40,12 +40,12 @@ public class S3UploadService {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
             return fileKey;
         } catch (Exception e) {
-            throw new TeensException(GlobalErrorCode.FAIL_IMAGE, e);
+            throw new TeensException(AwsErrorCode.FAIL_HANDLE_IMAGE, e);
         }
     }
 
     public String getFileUrl(String fileKey) {
-        String region = s3Properties.getRegion().staticRegion();
+        String region = awsProperties.getRegion().staticRegion();
         return String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, region, fileKey);
     }
 
@@ -61,7 +61,7 @@ public class S3UploadService {
             s3Client.deleteObject(deleteObjectRequest);
         } catch (Exception e) {
             log.error("S3 파일 삭제 실패: {}", e.getMessage());
-            throw new TeensException(GlobalErrorCode.FAIL_IMAGE);
+            throw new TeensException(AwsErrorCode.FAIL_HANDLE_IMAGE);
         }
     }
 }
