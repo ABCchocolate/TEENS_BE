@@ -1,0 +1,60 @@
+package kusuri12.teens_be.global.error.exception;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
+@AllArgsConstructor
+public enum GlobalErrorCode implements ErrorCode {
+
+    // 400
+    VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "GLB_400_01", "요청 데이터 유효성 검증에 실패했습니다."),
+    REQUEST_NOT_READABLE(HttpStatus.BAD_REQUEST, "GLB_400_02", "요청 본문의 형식이 잘못되었습니다."),
+    INVALID_EMAIL_EXTENSION(HttpStatus.BAD_REQUEST, "유효하지 않은 이메일 형식입니다."),
+    AUTH_CODE_EXPIRED(HttpStatus.BAD_REQUEST, "인증 시간이 만료되었습니다. 다시 인증 코드를 발급받아주세요."),
+    AUTH_CODE_MISMATCH(HttpStatus.BAD_REQUEST, "인증 코드가 일치하지 않습니다. 다시 확인해주세요."),
+    PASSWORD_CONFIRM_WRONG(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+    SAME_PASSWORD_WRONG(HttpStatus.BAD_REQUEST, "새 비밀번호가 현재 비밀번호와 같습니다."),
+
+    // 401
+    UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "GLB_401_01", "로그인 후 이용할 수 있습니다."),
+    INVALID_JWT(HttpStatus.UNAUTHORIZED, "GLB_401_02", "유효하지 않은 토큰입니다."),
+    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 일치하지 않습니다."),
+
+    // 403
+    FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "GLB_403", "접근 권한이 없습니다."),
+    NO_AUTHOR(HttpStatus.FORBIDDEN, "작성자만 수정할 수 있습니다."),
+    NO_ADMIN(HttpStatus.FORBIDDEN, "정보 게시판은 관리자만 관리할 수 있습니다."),
+
+    // 404
+    NOT_FOUND(HttpStatus.NOT_FOUND, "GLB_404", "해당 리소스를 찾을 수 없습니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자를 찾을 수 없습니다."),
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글을 찾을 수 없습니다."),
+    INFO_ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글을 찾을 수 없습니다."),
+
+    // 409
+    EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
+    USERNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 사용 중인 아이디입니다."),
+
+    // 서버 오류
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "GLB_500", "내부 서버 오류");
+
+    private final HttpStatus status;
+    private final String code;
+    private final String message;
+
+    @Override
+    public HttpStatus getStatus() {
+        return status;
+    }
+
+    @Override
+    public String getCode() {
+        return "";
+    }
+
+    @Override
+    public String getMessage() {
+        return message;
+    }
+}

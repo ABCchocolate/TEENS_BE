@@ -1,5 +1,7 @@
 package kusuri12.teens_be.global.s3;
 
+import kusuri12.teens_be.global.error.exception.GlobalErrorCode;
+import kusuri12.teens_be.global.error.exception.TeensException;
 import kusuri12.teens_be.global.s3.exception.FailUploadImageException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +40,7 @@ public class S3UploadService {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
             return fileKey;
         } catch (Exception e) {
-            throw new FailUploadImageException(e);
+            throw new TeensException(GlobalErrorCode.FAIL_IMAGE, e);
         }
     }
 
@@ -59,6 +61,7 @@ public class S3UploadService {
             s3Client.deleteObject(deleteObjectRequest);
         } catch (Exception e) {
             log.error("S3 파일 삭제 실패: {}", e.getMessage());
+            throw new TeensException(GlobalErrorCode.FAIL_IMAGE);
         }
     }
 }

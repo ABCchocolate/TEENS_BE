@@ -1,4 +1,4 @@
-package kusuri12.teens_be.domain.comment.domain.repository;
+package kusuri12.teens_be.domain.comment.repository;
 
 import kusuri12.teens_be.domain.comment.domain.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,5 +1,7 @@
 package kusuri12.teens_be.global.s3;
 
+import kusuri12.teens_be.global.error.exception.GlobalErrorCode;
+import kusuri12.teens_be.global.error.exception.TeensException;
 import kusuri12.teens_be.global.s3.exception.BadFileExtensionException;
 import kusuri12.teens_be.global.s3.exception.EmptyFileException;
 import org.springframework.stereotype.Component;
@@ -15,13 +17,13 @@ public class S3FileValidator {
     public String verifyImageFile(MultipartFile file) {
         // 1. 파일 존재 여부 확인
         if (file == null || file.isEmpty() || file.getOriginalFilename() == null) {
-            throw EmptyFileException.EXCEPTION;
+            throw new TeensException(GlobalErrorCode.FILE_IS_EMPTY);
         }
 
         // 2. 모든 이미지 타입 허용 (MIME 타입 체크)
         String contentType = file.getContentType();
         if (contentType == null || !contentType.startsWith(CONTENT_TYPE_IMAGE)) {
-            throw BadFileExtensionException.EXCEPTION;
+            throw new TeensException(GlobalErrorCode.BAD_FILE_EXTENSION);
         }
 
         // 3. 확장자 추출
@@ -31,7 +33,7 @@ public class S3FileValidator {
     private String extractExtension(String fileName) {
         int lastDotIndex = fileName.lastIndexOf(".");
         if (lastDotIndex == -1) {
-            throw BadFileExtensionException.EXCEPTION;
+            throw new TeensException(GlobalErrorCode.BAD_FILE_EXTENSION);
         }
         return fileName.substring(lastDotIndex + 1).toLowerCase(Locale.getDefault());
     }
