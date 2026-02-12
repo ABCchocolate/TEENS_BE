@@ -1,4 +1,4 @@
-package kusuri12.teens_be.domain.information.domain.repository;
+package kusuri12.teens_be.domain.information.repository;
 
 import kusuri12.teens_be.domain.information.domain.Information;
 import org.springframework.data.jpa.repository.JpaRepository;

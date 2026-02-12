@@ -1,11 +1,9 @@
-package kusuri12.teens_be.domain.comment.service;
+package kusuri12.teens_be.domain.forum.service;
 
-import kusuri12.teens_be.domain.comment.domain.Comment;
-import kusuri12.teens_be.domain.comment.repository.CommentRepository;
-import kusuri12.teens_be.domain.comment.exception.CommentNotFoundException;
-import kusuri12.teens_be.domain.comment.presentation.dto.request.CreateCommentRequest;
-import kusuri12.teens_be.domain.comment.presentation.dto.request.UpdateCommentRequest;
-import kusuri12.teens_be.domain.forum.exception.ForumNotFoundException;
+import kusuri12.teens_be.domain.forum.domain.Comment;
+import kusuri12.teens_be.domain.forum.repository.CommentRepository;
+import kusuri12.teens_be.domain.forum.presentation.dto.request.CreateCommentRequest;
+import kusuri12.teens_be.domain.forum.presentation.dto.request.UpdateCommentRequest;
 import kusuri12.teens_be.domain.forum.domain.Forum;
 import kusuri12.teens_be.domain.forum.repository.ForumRepository;
 import kusuri12.teens_be.domain.user.domain.User;

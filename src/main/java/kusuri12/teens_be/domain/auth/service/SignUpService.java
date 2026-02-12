@@ -1,8 +1,5 @@
 package kusuri12.teens_be.domain.auth.service;
 
-import kusuri12.teens_be.domain.auth.exception.EmailAlreadyExistsException;
-import kusuri12.teens_be.domain.auth.exception.PasswordConfirmWrongException;
-import kusuri12.teens_be.domain.auth.exception.UsernameAlreadyExistsException;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.SignUpRequest;
 import kusuri12.teens_be.domain.user.domain.User;
 import kusuri12.teens_be.domain.user.domain.repository.UserRepository;
@@ -12,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor

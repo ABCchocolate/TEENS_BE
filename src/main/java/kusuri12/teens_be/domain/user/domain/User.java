@@ -1,7 +1,7 @@
 package kusuri12.teens_be.domain.user.domain;
 
 import jakarta.persistence.*;
-import kusuri12.teens_be.domain.comment.domain.Comment;
+import kusuri12.teens_be.domain.forum.domain.Comment;
 import kusuri12.teens_be.domain.forum.domain.Forum;
 import kusuri12.teens_be.domain.user.domain.type.Role;
 import lombok.AccessLevel;

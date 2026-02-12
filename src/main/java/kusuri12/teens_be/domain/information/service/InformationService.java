@@ -5,10 +5,9 @@ import kusuri12.teens_be.domain.information.presentation.dto.request.UpdateInfor
 import kusuri12.teens_be.domain.information.presentation.dto.response.InformationDetailResponse;
 import kusuri12.teens_be.domain.information.presentation.dto.response.InformationListResponse;
 import kusuri12.teens_be.domain.information.domain.Information;
-import kusuri12.teens_be.domain.information.domain.repository.InformationRepository;
+import kusuri12.teens_be.domain.information.repository.InformationRepository;
 import kusuri12.teens_be.domain.user.domain.User;
 import kusuri12.teens_be.domain.user.domain.repository.UserRepository;
-import kusuri12.teens_be.domain.information.exception.InformationNotFoundException;
 import kusuri12.teens_be.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

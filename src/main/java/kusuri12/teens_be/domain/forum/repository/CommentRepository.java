@@ -1,6 +1,6 @@
-package kusuri12.teens_be.domain.comment.repository;
+package kusuri12.teens_be.domain.forum.repository;
 
-import kusuri12.teens_be.domain.comment.domain.Comment;
+import kusuri12.teens_be.domain.forum.domain.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

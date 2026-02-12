@@ -1,4 +1,4 @@
-package kusuri12.teens_be.domain.auth.domain.repository;
+package kusuri12.teens_be.domain.auth.repository;
 
 import kusuri12.teens_be.domain.auth.domain.RefreshToken;
 import org.springframework.data.repository.CrudRepository;

@@ -1,4 +1,4 @@
-package kusuri12.teens_be.domain.comment.presentation.dto.request;
+package kusuri12.teens_be.domain.forum.presentation.dto.request;
 
 import lombok.Getter;
 

@@ -1,7 +1,7 @@
 package kusuri12.teens_be.domain.user.service;
 
-import kusuri12.teens_be.domain.comment.domain.repository.CommentRepository;
-import kusuri12.teens_be.domain.forum.domain.repository.ForumRepository;
+import kusuri12.teens_be.domain.forum.repository.CommentRepository;
+import kusuri12.teens_be.domain.forum.repository.ForumRepository;
 import kusuri12.teens_be.domain.user.domain.repository.UserRepository;
 import kusuri12.teens_be.domain.user.domain.User;
 import kusuri12.teens_be.domain.user.exception.PasswordMismatchException;
@@ -10,7 +10,7 @@ import kusuri12.teens_be.domain.user.exception.UserNotFoundException;
 import kusuri12.teens_be.domain.user.presentation.dto.request.NicknameRequest;
 import kusuri12.teens_be.domain.user.presentation.dto.request.PasswordRequest;
 import kusuri12.teens_be.domain.user.presentation.dto.response.UserMeResponse;
-import kusuri12.teens_be.global.s3.S3UploadService;
+import kusuri12.teens_be.global.aws.s3.S3UploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

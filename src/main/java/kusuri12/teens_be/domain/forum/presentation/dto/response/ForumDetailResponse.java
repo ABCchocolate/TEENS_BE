@@ -1,6 +1,5 @@
 package kusuri12.teens_be.domain.forum.presentation.dto.response;
 
-import kusuri12.teens_be.domain.comment.presentation.dto.response.CommentResponse;
 import lombok.Builder;
 import lombok.Getter;
 

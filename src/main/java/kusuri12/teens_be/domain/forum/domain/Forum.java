@@ -1,7 +1,6 @@
 package kusuri12.teens_be.domain.forum.domain;
 
 import jakarta.persistence.*;
-import kusuri12.teens_be.domain.comment.domain.Comment;
 import kusuri12.teens_be.domain.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

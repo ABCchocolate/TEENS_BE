@@ -1,15 +1,13 @@
 package kusuri12.teens_be.domain.forum.service;
 
-import kusuri12.teens_be.domain.comment.domain.Comment;
-import kusuri12.teens_be.domain.comment.domain.repository.CommentRepository;
-import kusuri12.teens_be.domain.comment.presentation.dto.response.CommentResponse;
-import kusuri12.teens_be.domain.forum.exception.ForumNotFoundException;
+import kusuri12.teens_be.domain.forum.domain.Comment;
+import kusuri12.teens_be.domain.forum.repository.CommentRepository;
 import kusuri12.teens_be.domain.forum.presentation.dto.request.CreateForumRequest;
 import kusuri12.teens_be.domain.forum.presentation.dto.request.UpdateForumRequest;
 import kusuri12.teens_be.domain.forum.presentation.dto.response.ForumDetailResponse;
 import kusuri12.teens_be.domain.forum.presentation.dto.response.ForumListResponse;
 import kusuri12.teens_be.domain.forum.domain.Forum;
-import kusuri12.teens_be.domain.forum.domain.repository.ForumRepository;
+import kusuri12.teens_be.domain.forum.repository.ForumRepository;
 import kusuri12.teens_be.domain.user.domain.User;
 import kusuri12.teens_be.domain.user.domain.repository.UserRepository;
 import kusuri12.teens_be.domain.user.exception.UserNotFoundException;
