@@ -1,21 +1,18 @@
 package kusuri12.teens_be.domain.information.domain;
 
 import jakarta.persistence.*;
+import kusuri12.teens_be.domain.common.BaseTimeEntity;
 import kusuri12.teens_be.domain.user.domain.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "information")
 @Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class Information {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Information extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,20 +28,21 @@ public class Information {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
     @Column(nullable = false)
     private boolean pinned = false;
 
     @Column
     private String imageUrl;
 
-    // 수정 메서드 추가
-    public void updateTitleAndContent(String title, String content, boolean pinned, String imageUrl) {
+    @Builder
+    public Information(String title, String content, User user) {
         this.title = title;
         this.content = content;
-        this.pinned = pinned;
-        this.imageUrl = imageUrl;
+        this.user = user;
+    }
+    // 수정 메서드 추가
+    public void updateTitleAndContent(String title, String content) {
+        this.title = title;
+        this.content = content;
     }
 }

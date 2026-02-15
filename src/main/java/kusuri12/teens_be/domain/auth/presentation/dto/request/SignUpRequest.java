@@ -12,13 +12,12 @@ public record SignUpRequest(
         @NotBlank(message = "{validation.email.blank}")
         String email,
 
-        @NotBlank(message = "{validation.password.blank}")
-        @Size(min = 8, max = 60, message = "{validation.password.length}")
-        @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9._-]{8,60}$",
-                message = "{validation.password.pattern}")
+        @NotBlank
+        @Size(min = 8, max = 60)
+        @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*\\W)(?=\\S+$).+$")
         String password,
 
-        @NotBlank(message = "{validation.password.blank}")
+        @NotBlank
         String confirmPassword
 ) {
 }

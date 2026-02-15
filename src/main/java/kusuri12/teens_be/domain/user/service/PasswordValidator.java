@@ -36,5 +36,4 @@ public class PasswordValidator extends AbstractValidator<PasswordRequest> {
                     UserErrorCode.SAME_PASSWORD.getMessage());
         }
     }
-
 }

@@ -10,9 +10,11 @@ import kusuri12.teens_be.domain.auth.presentation.dto.response.SignInResponse;
 import kusuri12.teens_be.domain.auth.service.*;
 import kusuri12.teens_be.global.auth.AuthDetails;
 import kusuri12.teens_be.global.jwt.JwtTokens;
+import kusuri12.teens_be.global.validation.validator.PasswordValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,6 +27,13 @@ public class AuthController {
     private final CheckIdService checkIdService;
     private final SignOutService signOutService;
     private final ReissueService reissueService;
+
+    private final PasswordValidator passwordValidator;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.addValidators(passwordValidator);
+    }
 
     @PostMapping("/sign-up")
     public ResponseEntity<Void> signUp(@Valid @RequestBody SignUpRequest request) {

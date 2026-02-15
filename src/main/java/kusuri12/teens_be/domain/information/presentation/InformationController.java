@@ -40,7 +40,6 @@ public class InformationController {
     public ResponseEntity<Void> createInfoArticle(
             @AuthenticationPrincipal AuthDetails authDetails,
             @RequestBody CreateInformationRequest request) {
-//        System.out.println("createInfoArticle");
         Long userId = authDetails.getId();
         infoArticleService.createInfoArticle(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -48,15 +47,18 @@ public class InformationController {
 
     @PutMapping("/{information_id}")
     public ResponseEntity<Void> updateInfoArticle(
-            @PathVariable Long information_id,
+            @AuthenticationPrincipal AuthDetails authDetails,
+            @PathVariable(name = "information_id") Long informationId,
             @RequestBody UpdateInformationRequest request) {
-        infoArticleService.updateInfoArticle(information_id, request);
+        infoArticleService.updateInfoArticle(authDetails.getId(), informationId, request);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{information_id}")
-    public ResponseEntity<Void> deleteInfoArticle(@PathVariable Long information_id) {
-        infoArticleService.deleteInfoArticle(information_id);
+    public ResponseEntity<Void> deleteInfoArticle(
+            @AuthenticationPrincipal AuthDetails authDetails,
+            @PathVariable(name = "information_id") Long informationId) {
+        infoArticleService.deleteInfoArticle(authDetails.getId(), informationId);
         return ResponseEntity.noContent().build();
     }
 }

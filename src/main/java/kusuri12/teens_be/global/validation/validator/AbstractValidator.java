@@ -1,6 +1,5 @@
 package kusuri12.teens_be.global.validation.validator;
 
-import kusuri12.teens_be.domain.user.presentation.dto.request.PasswordRequest;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.Errors;
@@ -27,5 +26,5 @@ public abstract class AbstractValidator<T> implements Validator {
 
     protected abstract void doValidate(final T dto, final Errors errors);
 
-    protected abstract Class<PasswordRequest> getTargetClass();
+    protected abstract Class<T> getTargetClass();
 }

@@ -3,6 +3,7 @@ package kusuri12.teens_be.global.error.handler;
 import io.micrometer.common.lang.NonNullApi;
 import kusuri12.teens_be.global.error.exception.ErrorCode;
 import kusuri12.teens_be.global.error.exception.ErrorResponse;
+import kusuri12.teens_be.global.error.exception.GlobalErrorCode;
 import kusuri12.teens_be.global.error.exception.TeensException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -39,7 +40,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 errors.put(error.getField(), error.getDefaultMessage()));
 
-        ErrorCode errorCode = ErrorCode.VALIDATION_FAILED;
+        ErrorCode errorCode = GlobalErrorCode.VALIDATION_FAILED;
         ErrorResponse response = ErrorResponse.builder()
                 .status(errorCode.getStatus())
                 .message(errorCode.getMessage())
@@ -59,7 +60,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             WebRequest request) {
         log.error("HttpMessageNotReadableException: {}", ex.getMessage());
 
-        ErrorCode errorCode = ErrorCode.REQUEST_NOT_READABLE;
+        ErrorCode errorCode = GlobalErrorCode.REQUEST_NOT_READABLE;
         ErrorResponse response = ErrorResponse.builder()
                 .status(HttpStatus.BAD_REQUEST)
                 .message(errorCode.getMessage())
@@ -90,7 +91,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAuthenticationException(Exception e) {
         log.warn("Login Failed: {}", e.getMessage());
 
-        ErrorCode errorCode = ErrorCode.INVALID_CREDENTIALS;
+        ErrorCode errorCode = GlobalErrorCode.UNAUTHORIZED_ACCESS;
         ErrorResponse response = ErrorResponse.builder()
                 .status(errorCode.getStatus())
                 .message(errorCode.getMessage())
@@ -106,7 +107,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
         log.error("Unexpected Exception: {}", e.getMessage());
 
-        ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+        ErrorCode errorCode = GlobalErrorCode.INTERNAL_SERVER_ERROR;
         ErrorResponse response = ErrorResponse.builder()
                 .status(errorCode.getStatus())
                 .message(errorCode.getMessage())
