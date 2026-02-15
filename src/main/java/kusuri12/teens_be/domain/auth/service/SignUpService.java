@@ -1,10 +1,13 @@
 package kusuri12.teens_be.domain.auth.service;
 
+import kusuri12.teens_be.domain.auth.exception.AuthErrorCode;
+import kusuri12.teens_be.domain.auth.presentation.dto.request.SignInRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.SignUpRequest;
+import kusuri12.teens_be.domain.auth.presentation.dto.response.SignInResponse;
 import kusuri12.teens_be.domain.user.domain.User;
 import kusuri12.teens_be.domain.user.repository.UserRepository;
 import kusuri12.teens_be.domain.user.domain.Role;
-import kusuri12.teens_be.global.jwt.JwtTokenProvider;
+import kusuri12.teens_be.global.error.exception.TeensException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,23 +17,19 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class SignUpService {
 
-    private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder encoder;
     private final UserRepository userRepository;
+    private final SignInService signInService;
 
     @Transactional
-    public void signUp(SignUpRequest request) {
-
-        if (!request.password().equals(request.confirmPassword())) {
-            throw PasswordConfirmWrongException.EXCEPTION;
-        }
+    public SignInResponse execute(SignUpRequest request) {
 
         if (userRepository.existsByUsername(request.username())) {
-            throw UsernameAlreadyExistsException.EXCEPTION;
+            throw new TeensException(AuthErrorCode.USERNAME_ALREADY_EXISTS);
         }
 
         if (userRepository.existsByEmail(request.email())) {
-            throw EmailAlreadyExistsException.EXCEPTION;
+            throw new TeensException(AuthErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
         User user = User.builder()
@@ -41,5 +40,6 @@ public class SignUpService {
                 .build();
 
         userRepository.save(user);
+        return signInService.execute(SignInRequest.from(user));
     }
 }

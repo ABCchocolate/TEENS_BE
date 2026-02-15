@@ -1,8 +1,9 @@
 package kusuri12.teens_be.domain.auth.service;
 
+import kusuri12.teens_be.domain.auth.exception.AuthErrorCode;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.CheckIdRequest;
-import kusuri12.teens_be.domain.auth.presentation.dto.response.CheckIdResponse;
 import kusuri12.teens_be.domain.user.repository.UserRepository;
+import kusuri12.teens_be.global.error.exception.TeensException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +15,9 @@ public class CheckIdService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public CheckIdResponse checkId(CheckIdRequest request) {
-        return new CheckIdResponse(!userRepository.existsByUsername(request.username()));
+    public void execute(CheckIdRequest request) {
+        if (!userRepository.existsByUsername(request.username())) {
+            throw new TeensException(AuthErrorCode.USERNAME_ALREADY_EXISTS);
+        }
     }
 }

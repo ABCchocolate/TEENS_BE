@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import kusuri12.teens_be.domain.user.presentation.dto.request.NicknameRequest;
 import kusuri12.teens_be.domain.user.presentation.dto.request.PasswordRequest;
 import kusuri12.teens_be.domain.user.presentation.dto.response.UserMeResponse;
-import kusuri12.teens_be.domain.user.service.PasswordValidator;
+import kusuri12.teens_be.domain.user.service.validator.PasswordValidator;
 import kusuri12.teens_be.domain.user.service.UserMyPageService;
 import kusuri12.teens_be.global.auth.AuthDetails;
 import kusuri12.teens_be.global.aws.s3.S3UploadService;

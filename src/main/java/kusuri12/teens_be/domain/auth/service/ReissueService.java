@@ -13,7 +13,7 @@ public class ReissueService {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    public JwtTokens reissue(ReissueRequest request) {
+    public JwtTokens execute(ReissueRequest request) {
 
         String refreshToken = request.refreshToken();
 
