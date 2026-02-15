@@ -25,15 +25,15 @@ public class PasswordValidator extends AbstractValidator<PasswordRequest> {
         if (encoder.matches(dto.currentPassword(), dto.newPassword())) {
             errors.rejectValue(
                     "newPassword",
-                    UserErrorCode.PASSWORD_CONFIRM_WRONG.getCode(),
-                    UserErrorCode.PASSWORD_CONFIRM_WRONG.getMessage());
+                    UserErrorCode.SAME_PASSWORD.getCode(),
+                    UserErrorCode.SAME_PASSWORD.getMessage());
         }
 
         if (!dto.newPassword().equals(dto.confirmPassword())) {
             errors.rejectValue(
                     "confirmPassword",
-                    UserErrorCode.SAME_PASSWORD.getCode(),
-                    UserErrorCode.SAME_PASSWORD.getMessage());
+                    UserErrorCode.PASSWORD_CONFIRM_WRONG.getCode(),
+                    UserErrorCode.PASSWORD_CONFIRM_WRONG.getMessage());
         }
     }
 }
