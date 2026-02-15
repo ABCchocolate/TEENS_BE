@@ -1,18 +1,16 @@
 package kusuri12.teens_be.domain.forum.presentation.dto.response;
 
 import lombok.Builder;
-import lombok.Getter;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
 @Builder
-public class ForumDetailResponse {
-    private Long id;
-    private String title;
-    private String content;
-    private String authorName;
-    private LocalDateTime createdAt;
-    private List<CommentResponse> comments;
+public record ForumDetailResponse(
+        Long id,
+        String title,
+        String content,
+        String authorName,
+        LocalDateTime createdAt,
+        List<CommentResponse> comments
+) {
 }

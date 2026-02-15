@@ -3,7 +3,6 @@ package kusuri12.teens_be.domain.user.domain;
 import jakarta.persistence.*;
 import kusuri12.teens_be.domain.forum.domain.Comment;
 import kusuri12.teens_be.domain.forum.domain.Forum;
-import kusuri12.teens_be.domain.user.domain.type.Role;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,6 +11,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Entity
+@Table(name = "user")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {

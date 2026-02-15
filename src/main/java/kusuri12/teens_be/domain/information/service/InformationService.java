@@ -7,8 +7,7 @@ import kusuri12.teens_be.domain.information.presentation.dto.response.Informatio
 import kusuri12.teens_be.domain.information.domain.Information;
 import kusuri12.teens_be.domain.information.repository.InformationRepository;
 import kusuri12.teens_be.domain.user.domain.User;
-import kusuri12.teens_be.domain.user.domain.repository.UserRepository;
-import kusuri12.teens_be.domain.user.exception.UserNotFoundException;
+import kusuri12.teens_be.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

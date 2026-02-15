@@ -14,7 +14,6 @@ public enum GlobalErrorCode implements ErrorCode {
     AUTH_CODE_EXPIRED(HttpStatus.BAD_REQUEST, "인증 시간이 만료되었습니다. 다시 인증 코드를 발급받아주세요."),
     AUTH_CODE_MISMATCH(HttpStatus.BAD_REQUEST, "인증 코드가 일치하지 않습니다. 다시 확인해주세요."),
     PASSWORD_CONFIRM_WRONG(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
-    SAME_PASSWORD_WRONG(HttpStatus.BAD_REQUEST, "새 비밀번호가 현재 비밀번호와 같습니다."),
 
     // 401
     UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "GLB_401_01", "로그인 후 이용할 수 있습니다."),
@@ -28,8 +27,6 @@ public enum GlobalErrorCode implements ErrorCode {
 
     // 404
     NOT_FOUND(HttpStatus.NOT_FOUND, "GLB_404", "해당 리소스를 찾을 수 없습니다."),
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자를 찾을 수 없습니다."),
-    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글을 찾을 수 없습니다."),
     INFO_ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글을 찾을 수 없습니다."),
 
     // 409

@@ -1,7 +1,7 @@
 package kusuri12.teens_be.global.auth;
 
 import kusuri12.teens_be.domain.user.domain.User;
-import kusuri12.teens_be.domain.user.domain.repository.UserRepository;
+import kusuri12.teens_be.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

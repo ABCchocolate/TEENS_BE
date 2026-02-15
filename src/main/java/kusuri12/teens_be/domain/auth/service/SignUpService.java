@@ -2,8 +2,8 @@ package kusuri12.teens_be.domain.auth.service;
 
 import kusuri12.teens_be.domain.auth.presentation.dto.request.SignUpRequest;
 import kusuri12.teens_be.domain.user.domain.User;
-import kusuri12.teens_be.domain.user.domain.repository.UserRepository;
-import kusuri12.teens_be.domain.user.domain.type.Role;
+import kusuri12.teens_be.domain.user.repository.UserRepository;
+import kusuri12.teens_be.domain.user.domain.Role;
 import kusuri12.teens_be.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

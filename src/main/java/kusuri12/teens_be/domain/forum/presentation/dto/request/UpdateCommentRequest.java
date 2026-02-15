@@ -1,8 +1,13 @@
 package kusuri12.teens_be.domain.forum.presentation.dto.request;
 
-import lombok.Getter;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import kusuri12.teens_be.global.validation.anotation.Ban;
 
-@Getter
-public class UpdateCommentRequest {
-    private String content;
-}
+public record UpdateCommentRequest(
+
+        @NotBlank
+        @Size(max = 1000)
+        @Ban
+        String content
+) { }
