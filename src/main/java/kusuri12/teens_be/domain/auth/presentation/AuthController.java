@@ -71,6 +71,7 @@ public class AuthController {
     public ResponseEntity<JwtTokens> reissue(
             @RequestHeader("Authorization") String accessTokenHeader,
             @RequestBody ReissueRequest request) {
-        return ResponseEntity.ok(reissueService.execute(accessTokenHeader, request));
+        String accessToken = accessTokenHeader.substring(7);
+        return ResponseEntity.ok(reissueService.execute(accessToken, request));
     }
 }
