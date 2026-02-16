@@ -16,7 +16,7 @@ public class CheckIdService {
 
     @Transactional(readOnly = true)
     public void execute(CheckIdRequest request) {
-        if (!userRepository.existsByUsername(request.username())) {
+        if (userRepository.existsByUsername(request.username())) {
             throw new TeensException(AuthErrorCode.USERNAME_ALREADY_EXISTS);
         }
     }
