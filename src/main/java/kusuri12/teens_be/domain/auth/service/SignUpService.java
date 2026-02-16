@@ -40,6 +40,6 @@ public class SignUpService {
                 .build();
 
         userRepository.save(user);
-        return signInService.execute(SignInRequest.from(user));
+        return signInService.execute(SignInRequest.of(request.username(), request.password()));
     }
 }

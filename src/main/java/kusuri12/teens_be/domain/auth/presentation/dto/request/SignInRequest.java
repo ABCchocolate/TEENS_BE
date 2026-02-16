@@ -10,7 +10,9 @@ public record SignInRequest(
         @NotBlank
         String password
 ) {
-        public static SignInRequest from(User user) {
-                return new SignInRequest(user.getUsername(), user.getPassword());
+        public static SignInRequest of(String username, String password) {
+                return new SignInRequest(
+                        username, password
+                );
         }
 }
