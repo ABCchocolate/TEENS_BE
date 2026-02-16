@@ -79,10 +79,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
 
             Claims claims = jwtTokenProvider.parse(jwt);
-            String tokenType = claims.get(JwtTokenProvider.CLAIM_TOKEN_TYPE, String.class);
             String username = claims.getSubject();
-            Long userId = claims.get("userId", Long.class);
+            Long userId = claims.get(JwtTokenProvider.CLAIM_USER_ID, Long.class);
             String authoritiesStr = claims.get(JwtTokenProvider.CLAIM_AUTHORITIES, String.class);
+            String tokenType = claims.get(JwtTokenProvider.CLAIM_TOKEN_TYPE, String.class);
 
             if ("ACCESS".equals(tokenType) && username != null && userId != null) {
 

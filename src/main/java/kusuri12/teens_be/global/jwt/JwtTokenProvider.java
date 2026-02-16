@@ -22,6 +22,7 @@ public class JwtTokenProvider {
 
     public static final String AUTH_HEADER = "Authorization";
     public static final String BEARER_PREFIX = "Bearer ";
+    public static final String CLAIM_USER_ID = "userId";
     public static final String CLAIM_AUTHORITIES = "authorities";
     public static final String CLAIM_TOKEN_TYPE = "tokenType";
 
@@ -53,6 +54,7 @@ public class JwtTokenProvider {
         // 액세스 토큰
         String accessToken = Jwts.builder()
                 .subject(authDetails.getUsername())
+                .claim(CLAIM_USER_ID, authDetails.getId())
                 .claim(CLAIM_AUTHORITIES, authorities)
                 .claim(CLAIM_TOKEN_TYPE, "ACCESS")
                 .issuedAt(issuedAt)
