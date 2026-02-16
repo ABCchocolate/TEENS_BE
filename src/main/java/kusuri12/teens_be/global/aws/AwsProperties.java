@@ -1,13 +1,13 @@
 package kusuri12.teens_be.global.aws;
 
-import jdk.jfr.Name;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.Name;
 
 @Getter
 @RequiredArgsConstructor
-@ConfigurationProperties(prefix = "cloud.aws")
+@ConfigurationProperties(prefix = "spring.cloud.aws")
 public class AwsProperties {
 
     private final S3 s3;
@@ -22,5 +22,6 @@ public class AwsProperties {
             String secretKey) { }
 
     public record Region(
-            @Name("static") String staticRegion) { }
+            @Name("static") String staticRegion
+    ) { }
 }
