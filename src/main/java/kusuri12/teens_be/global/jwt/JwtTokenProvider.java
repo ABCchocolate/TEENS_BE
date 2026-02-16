@@ -6,12 +6,12 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
-import kusuri12.teens_be.domain.auth.repository.RefreshTokenRepository;
 import kusuri12.teens_be.domain.user.domain.User;
+import kusuri12.teens_be.domain.user.exception.UserErrorCode;
 import kusuri12.teens_be.domain.user.repository.UserRepository;
 import kusuri12.teens_be.global.auth.AuthDetails;
-import kusuri12.teens_be.global.jwt.exception.ExpiredTokenException;
-import kusuri12.teens_be.global.jwt.exception.InvalidTokenException;
+import kusuri12.teens_be.global.error.exception.GlobalErrorCode;
+import kusuri12.teens_be.global.error.exception.TeensException;
 import kusuri12.teens_be.global.redis.RedisService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -24,57 +24,56 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider {
 
+    public static final String AUTH_HEADER = "Authorization";
+    public static final String BEARER_PREFIX = "Bearer ";
+    public static final String CLAIM_AUTHORITIES = "authorities";
+    public static final String CLAIM_TOKEN_TYPE = "tokenType";
+
     private final JwtProperties jwtProperties;
     private final SecretKey key;
-    private final RedisService redisService;
-    private final UserRepository userRepository;
 
     public JwtTokenProvider(
-            JwtProperties jwtProperties,
-            RedisService redisService,
-            RefreshTokenRepository refreshTokenRepository,
-            UserRepository userRepository) {
+            JwtProperties jwtProperties) {
         this.jwtProperties = jwtProperties;
         this.key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes());
-        this.redisService = redisService;
-        this.userRepository = userRepository;
     }
 
     // 토큰 쌍 생성
-    public JwtTokens generateToken(AuthDetails authDetails) {
-        Instant now = Instant.now();
+    public JwtTokens generateToken(User user) {
 
+        AuthDetails authDetails = new AuthDetails(user);
+
+        // 현재 시간
+        Instant now = Instant.now();
         Date issuedAt = Date.from(now);
+
+        // exp 설정
         Date accessExp = Date.from(now.plusSeconds(jwtProperties.getAccessTokenExpiration()));
         Date refreshExp = Date.from(now.plusSeconds(jwtProperties.getRefreshTokenExpiration()));
 
+        // 권한 설정
         String authorities = authDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
+        // 액세스 토큰
         String accessToken = Jwts.builder()
                 .subject(authDetails.getUsername())
-                .claim("authorities", authorities)
-                .claim("tokenType", "ACCESS")
+                .claim(CLAIM_AUTHORITIES, authorities)
+                .claim(CLAIM_TOKEN_TYPE, "ACCESS")
                 .issuedAt(issuedAt)
                 .expiration(accessExp)
-                .signWith(key, Jwts.SIG.HS512)
+                .signWith(key)
                 .compact();
 
+        // 리프레시 토큰
         String refreshToken = Jwts.builder()
                 .subject(authDetails.getUsername())
-                .claim("tokenType", "REFRESH")
+                .claim(CLAIM_TOKEN_TYPE, "REFRESH")
                 .issuedAt(issuedAt)
                 .expiration(refreshExp)
-                .signWith(key, Jwts.SIG.HS512)
+                .signWith(key)
                 .compact();
-
-        String key = "RT:" + authDetails.getUsername();
-        redisService.set(
-                key,
-                refreshToken,
-                jwtProperties.getRefreshTokenExpiration()
-        );
 
         return JwtTokens.builder()
                 .accessToken(accessToken)
@@ -90,45 +89,12 @@ public class JwtTokenProvider {
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
-        } catch (ExpiredTokenException e){
-            throw ExpiredTokenException.EXCEPTION;
-        } catch (JwtException | IllegalArgumentException e) {
-            throw InvalidTokenException.EXCEPTION;
+        } catch (Exception e){
+            throw new TeensException(GlobalErrorCode.INVALID_JWT);
         }
     }
 
-    public boolean validateToken(String token) {
-        try {
-            parse(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    // access 토큰이 만료되었을 때
-    public JwtTokens reissueToken(String refreshToken) {
-        String username = getUsername(refreshToken);
-
-        // Redis에서 기존 토큰 확인
-        Object storedToken = redisService.get("RT:" + username);
-
-        // null 확인
-        if (storedToken == null) {
-            throw InvalidTokenException.EXCEPTION;
-        }
-
-        // 기존 Refresh Token 삭제
-        redisService.delete("RT:" + username);
-
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> UserNotFoundException.EXCEPTION);
-        AuthDetails authDetails = new AuthDetails(user);
-
-        return generateToken(authDetails);
-    }
-
-    public String getUsername(String token) {
+    private String getUsername(String token) {
         try {
             return Jwts.parser()
                     .verifyWith(key)
@@ -139,16 +105,12 @@ public class JwtTokenProvider {
         } catch (ExpiredJwtException e) {
             return e.getClaims().getSubject();
         } catch (JwtException e) {
-            throw InvalidTokenException.EXCEPTION;
+            throw new TeensException(GlobalErrorCode.INVALID_JWT);
         }
     }
 
-    public String getRefreshToken(String username) {
-        Object token = redisService.get("RT:" + username);
-        return (token != null) ? token.toString() : null;
-    }
-
-    public long getExpiration(String token) {
+    // 토큰의 남은 시간
+    public long getRemainTime(String token) {
         Claims claims = parse(token);
         Date expiration = claims.getExpiration();
         long nowMillis = Instant.now().toEpochMilli();
@@ -163,28 +125,12 @@ public class JwtTokenProvider {
 
     // Jwt 추출 메서드
     public String getJwt(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
+        String bearerToken = request.getHeader(AUTH_HEADER);
 
-        if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
+        if (bearerToken == null || !bearerToken.startsWith(BEARER_PREFIX)) {
             return null;
         }
 
         return bearerToken.substring(7);
-    }
-
-    // redis 관련
-
-    public boolean isBlackList(String accessToken) {
-        return redisService.get("BlackList:" + accessToken) != null;
-    }
-
-    public void addToBlackList(String accessToken, String username, long expiration) {
-        String blackListKey = "BlackList:" + accessToken;
-        redisService.set(blackListKey, username, expiration);
-    }
-
-    public void deleteRefreshToken(String username) {
-        // 키 생성 규칙(RT:) 및 Redis 접근 로직을 Provider가 캡슐화
-        redisService.delete("RT:" + username);
     }
 }

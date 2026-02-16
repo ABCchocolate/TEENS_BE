@@ -1,14 +1,14 @@
 package kusuri12.teens_be.global.error.filter;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kusuri12.teens_be.global.auth.AuthDetails;
 import kusuri12.teens_be.global.jwt.JwtTokenProvider;
-import kusuri12.teens_be.global.jwt.exception.ExpiredTokenException;
-import kusuri12.teens_be.global.jwt.exception.InvalidTokenException;
+import kusuri12.teens_be.global.redis.RedisService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,6 +31,7 @@ import static kusuri12.teens_be.global.config.SecurityConfig.PERMITTED_AUTH;
 // OncePerRequestFilter: 상속받은 클래스가 해당 필터를 한 번 실행할 수 있도록 함
 public class JwtTokenFilter extends OncePerRequestFilter {
 
+    private final RedisService redisService;
     private final JwtTokenProvider jwtTokenProvider;
     private final AntPathMatcher matcher = new AntPathMatcher(); // url, 파일 경로가 일치하는 지 확인하는 Matcher
 
@@ -84,7 +85,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
 
             chain.doFilter(request, response);
-        } catch (ExpiredTokenException e) {
+        } catch (ExpiredJwtException e) {
             throw ExpiredTokenException.EXCEPTION;
         } catch (InvalidTokenException e) {
             throw InvalidTokenException.EXCEPTION;
