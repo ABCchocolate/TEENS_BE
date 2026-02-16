@@ -14,6 +14,7 @@ public enum GlobalErrorCode implements ErrorCode {
     // 401
     UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "GLB_401_01", "로그인 후 이용할 수 있습니다."),
     INVALID_JWT(HttpStatus.UNAUTHORIZED, "GLB_401_02", "유효하지 않은 토큰입니다."),
+    EXPIRED_JWT(HttpStatus.UNAUTHORIZED, "GLB_401_03", "만료된 토큰입니다."),
 
     // 403
     FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "GLB_403", "접근 권한이 없습니다."),

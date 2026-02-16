@@ -3,11 +3,9 @@ package kusuri12.teens_be.global.error.filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kusuri12.teens_be.global.error.exception.ErrorCode;
+import kusuri12.teens_be.global.error.exception.GlobalErrorCode;
 import kusuri12.teens_be.global.error.exception.ResponseWithErrorCode;
 import kusuri12.teens_be.global.error.exception.TeensException;
-import kusuri12.teens_be.global.jwt.exception.ExpiredTokenException;
-import kusuri12.teens_be.global.jwt.exception.InvalidTokenException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,18 +26,12 @@ public class GlobalExceptionFilter extends OncePerRequestFilter {
             @NonNull FilterChain chain) throws IOException {
         try {
             chain.doFilter(request, response);
-        } catch (ExpiredTokenException e) {
-            log.error("ExpiredJwtException catch : {}", e.getMessage());
-            responseWithErrorCode.response(response, ErrorCode.EXPIRED_JWT);
-        } catch (InvalidTokenException e) {
-            log.error("InvalidJwtException catch : {}", e.getMessage());
-            responseWithErrorCode.response(response, ErrorCode.INVALID_JWT);
         } catch (TeensException e) {
             log.error("Handled TeensException : ", e);
             responseWithErrorCode.response(response, e.getErrorCode());
         } catch (Exception e) {
             log.error("Unhandled Exception : ", e);
-            responseWithErrorCode.response(response, ErrorCode.INTERNAL_SERVER_ERROR);
+            responseWithErrorCode.response(response, GlobalErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 }

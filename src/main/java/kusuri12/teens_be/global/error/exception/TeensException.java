@@ -13,6 +13,11 @@ public class TeensException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
+    public TeensException(ErrorCode errorCode, String message) {
+        super(message);
+        this.errorCode = errorCode;
+    }
+
     public TeensException(ErrorCode errorCode, Throwable cause) {
         super(cause);
         this.errorCode = errorCode;

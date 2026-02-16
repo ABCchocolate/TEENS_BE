@@ -6,13 +6,9 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
-import kusuri12.teens_be.domain.user.domain.User;
-import kusuri12.teens_be.domain.user.exception.UserErrorCode;
-import kusuri12.teens_be.domain.user.repository.UserRepository;
 import kusuri12.teens_be.global.auth.AuthDetails;
 import kusuri12.teens_be.global.error.exception.GlobalErrorCode;
 import kusuri12.teens_be.global.error.exception.TeensException;
-import kusuri12.teens_be.global.redis.RedisService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
@@ -39,9 +35,7 @@ public class JwtTokenProvider {
     }
 
     // 토큰 쌍 생성
-    public JwtTokens generateToken(User user) {
-
-        AuthDetails authDetails = new AuthDetails(user);
+    public JwtTokens generateToken(AuthDetails authDetails) {
 
         // 현재 시간
         Instant now = Instant.now();
@@ -94,7 +88,7 @@ public class JwtTokenProvider {
         }
     }
 
-    private String getUsername(String token) {
+    public String getUsernameFromExpiredToken(String token) {
         try {
             return Jwts.parser()
                     .verifyWith(key)
@@ -124,7 +118,7 @@ public class JwtTokenProvider {
     }
 
     // Jwt 추출 메서드
-    public String getJwt(HttpServletRequest request) {
+    public String getToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTH_HEADER);
 
         if (bearerToken == null || !bearerToken.startsWith(BEARER_PREFIX)) {

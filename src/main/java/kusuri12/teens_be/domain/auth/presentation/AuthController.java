@@ -53,19 +53,17 @@ public class AuthController {
 
     @PostMapping("/sign-out")
     public ResponseEntity<Void> signOut(
-            @AuthenticationPrincipal AuthDetails authDetails,
             @RequestHeader("Authorization") String accessTokenHeader) {
         String accessToken = accessTokenHeader.substring(7); // "Bearer " 제거
-        signOutService.execute(accessToken, authDetails.getUsername());
+        signOutService.execute(accessToken);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/quit")
     public ResponseEntity<Void> quit(
-            @AuthenticationPrincipal AuthDetails authDetails,
             @RequestHeader("Authorization") String accessTokenHeader) {
         String accessToken = accessTokenHeader.substring(7);
-        quitService.execute(accessToken, authDetails.getUsername());
+        quitService.execute(accessToken);
         return ResponseEntity.noContent().build();
     }
 
