@@ -107,7 +107,7 @@ public class ForumService {
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> new TeensException(ForumErrorCode.FORUM_NOT_FOUND));
 
-        forum.updateTitleAndContent(request.title(), request.title());
+        forum.updateTitleAndContent(request.title(), request.content());
     }
 
     @Transactional
