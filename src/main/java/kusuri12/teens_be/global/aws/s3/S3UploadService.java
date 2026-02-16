@@ -15,14 +15,23 @@ import java.net.URI;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class S3UploadService {
 
     private final S3Client s3Client;
     private final AwsProperties awsProperties;
     private final S3FileValidator s3FileValidator;
-    private final String bucket = awsProperties.getS3().bucket();
+    private final String bucket;
+
+    public S3UploadService(
+            S3Client s3Client,
+            AwsProperties awsProperties,
+            S3FileValidator s3FileValidator) {
+        this.s3Client = s3Client;
+        this.awsProperties = awsProperties;
+        this.s3FileValidator = s3FileValidator;
+        this.bucket =  awsProperties.getS3().bucket();
+    }
 
     public String upload(MultipartFile file, String path) {
         String ext = s3FileValidator.verifyImageFile(file);

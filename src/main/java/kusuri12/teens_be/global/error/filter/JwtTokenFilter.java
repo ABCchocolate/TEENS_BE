@@ -20,6 +20,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 
 import static kusuri12.teens_be.global.config.SecurityConfig.PERMITTED_AUTH;
 
+@Component
 @RequiredArgsConstructor
 // OncePerRequestFilter: 상속받은 클래스가 해당 필터를 한 번 실행할 수 있도록 함
 public class JwtTokenFilter extends OncePerRequestFilter {
