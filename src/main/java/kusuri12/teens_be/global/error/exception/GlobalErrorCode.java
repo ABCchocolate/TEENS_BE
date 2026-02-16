@@ -36,7 +36,7 @@ public enum GlobalErrorCode implements ErrorCode {
 
     @Override
     public String getCode() {
-        return "";
+        return code;
     }
 
     @Override
