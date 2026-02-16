@@ -20,7 +20,7 @@ public class PasswordValidator extends AbstractValidator<PasswordRequest> {
     protected void doValidate(PasswordRequest dto, Errors errors) {
 
         // 현재 패스워드랑 새로운 패스워드가 같을 때
-        if (!dto.currentPassword().equals(dto.newPassword())) {
+        if (dto.currentPassword().equals(dto.newPassword())) {
             errors.rejectValue(
                     "newPassword",
                     UserErrorCode.SAME_PASSWORD.getCode(),
