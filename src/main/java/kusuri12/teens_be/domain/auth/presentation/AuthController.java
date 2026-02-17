@@ -34,7 +34,9 @@ public class AuthController {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.addValidators(signUpValidator);
+        if (binder.getTarget() != null && signUpValidator.supports(binder.getTarget().getClass())) {
+            binder.addValidators(signUpValidator);
+        }
     }
 
     @PostMapping("/sign-up")

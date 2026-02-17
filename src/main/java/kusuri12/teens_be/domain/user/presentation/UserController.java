@@ -27,7 +27,9 @@ public class UserController {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.addValidators(passwordValidator);
+        if (binder.getTarget() != null && passwordValidator.supports(binder.getTarget().getClass())) {
+            binder.addValidators(passwordValidator);
+        }
     }
 
     @GetMapping
