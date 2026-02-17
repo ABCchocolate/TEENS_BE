@@ -8,6 +8,8 @@ import kusuri12.teens_be.domain.forum.presentation.dto.request.UpdateForumReques
 import kusuri12.teens_be.domain.forum.presentation.dto.response.ForumDetailResponse;
 import kusuri12.teens_be.domain.forum.presentation.dto.response.ForumListResponse;
 import kusuri12.teens_be.domain.forum.service.ForumService;
+import kusuri12.teens_be.global.security.annotation.CheckAuthor;
+import kusuri12.teens_be.global.security.annotation.CheckId;
 import kusuri12.teens_be.global.security.userdetails.AuthDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -49,16 +51,19 @@ public class ForumController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @CheckAuthor
     @PutMapping("/{forum_id}")
     public ResponseEntity<Void> updateForum(
-            @PathVariable(name = "forum_id") Long forumId,
+            @CheckId @PathVariable(name = "forum_id") Long forumId,
             @RequestBody UpdateForumRequest request) {
         forumService.updateForum(forumId, request);
         return ResponseEntity.ok().build();
     }
 
+    @CheckAuthor
     @DeleteMapping("/{forum_id}")
-    public ResponseEntity<Void> deleteForum(@PathVariable(name = "forum_id") Long forumId) {
+    public ResponseEntity<Void> deleteForum(
+            @CheckId @PathVariable(name = "forum_id") Long forumId) {
         forumService.deleteForum(forumId);
         return ResponseEntity.noContent().build();
     }
@@ -75,7 +80,7 @@ public class ForumController {
 
     @PutMapping("/{forum_id}/comment/{comment_id}")
     public ResponseEntity<Void> updateComment(
-            @PathVariable(name = "comment_id") Long commentId,
+            @CheckId @PathVariable(name = "comment_id") Long commentId,
             @RequestBody UpdateCommentRequest request) {
         commentService.updateComment(commentId, request);
         return ResponseEntity.ok().build();
@@ -83,7 +88,7 @@ public class ForumController {
 
     @DeleteMapping("/{forum_id}/comment/{comment_id}")
     public ResponseEntity<Void> deleteComment(
-            @PathVariable(name = "comment_id") Long commentId) {
+            @CheckId @PathVariable(name = "comment_id") Long commentId) {
         commentService.deleteComment(commentId);
         return ResponseEntity.noContent().build();
     }

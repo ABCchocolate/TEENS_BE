@@ -11,13 +11,14 @@ import kusuri12.teens_be.domain.user.domain.User;
 import kusuri12.teens_be.domain.user.exception.UserErrorCode;
 import kusuri12.teens_be.domain.user.repository.UserRepository;
 import kusuri12.teens_be.global.error.exception.TeensException;
+import kusuri12.teens_be.global.security.aspect.Authorizable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class CommentService {
+public class CommentService implements Authorizable {
 
     private final CommentRepository commentRepository;
     private final ForumRepository forumRepository;
@@ -61,5 +62,12 @@ public class CommentService {
         user.decreaseCommentCount();
 
         commentRepository.delete(comment);
+    }
+
+    @Override
+    public Long getAuthorId(Long resourceId) {
+        return commentRepository.findById(resourceId)
+                .map(comment -> comment.getUser().getId())
+                .orElseThrow(() -> new TeensException(ForumErrorCode.COMMENT_NOT_FOUND));
     }
 }

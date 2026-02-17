@@ -10,6 +10,7 @@ public enum GlobalErrorCode implements ErrorCode {
     // 400
     VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "GLB_400_01", "요청 데이터 유효성 검증에 실패했습니다."),
     REQUEST_NOT_READABLE(HttpStatus.BAD_REQUEST, "GLB_400_02", "요청 본문의 형식이 잘못되었습니다."),
+    INVALID_REQUEST(HttpStatus.BAD_REQUEST, "GLB_400_03", "잘못된 요청입니다."),
 
     // 401
     UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "GLB_401_01", "로그인 후 이용할 수 있습니다."),
@@ -18,6 +19,7 @@ public enum GlobalErrorCode implements ErrorCode {
 
     // 403
     FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "GLB_403", "접근 권한이 없습니다."),
+    NO_AUTHOR(HttpStatus.FORBIDDEN, "GLB_403", "작성자 또는 관리자만 수정할 수 있습니다."),
 
     // 404
     NOT_FOUND(HttpStatus.NOT_FOUND, "GLB_404", "해당 리소스를 찾을 수 없습니다."),

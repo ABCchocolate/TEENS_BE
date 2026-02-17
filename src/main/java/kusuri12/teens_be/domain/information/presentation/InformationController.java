@@ -5,6 +5,8 @@ import kusuri12.teens_be.domain.information.presentation.dto.request.UpdateInfor
 import kusuri12.teens_be.domain.information.presentation.dto.response.InformationDetailResponse;
 import kusuri12.teens_be.domain.information.presentation.dto.response.InformationListResponse;
 import kusuri12.teens_be.domain.information.service.InformationService;
+import kusuri12.teens_be.global.security.annotation.CheckAuthor;
+import kusuri12.teens_be.global.security.annotation.CheckId;
 import kusuri12.teens_be.global.security.userdetails.AuthDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -45,20 +47,20 @@ public class InformationController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @CheckAuthor
     @PutMapping("/{information_id}")
     public ResponseEntity<Void> updateInfoArticle(
-            @AuthenticationPrincipal AuthDetails authDetails,
-            @PathVariable(name = "information_id") Long informationId,
+            @CheckId @PathVariable(name = "information_id") Long informationId,
             @RequestBody UpdateInformationRequest request) {
-        infoArticleService.updateInfoArticle(authDetails.getId(), informationId, request);
+        infoArticleService.updateInfoArticle(informationId, request);
         return ResponseEntity.ok().build();
     }
 
+    @CheckAuthor
     @DeleteMapping("/{information_id}")
     public ResponseEntity<Void> deleteInfoArticle(
-            @AuthenticationPrincipal AuthDetails authDetails,
-            @PathVariable(name = "information_id") Long informationId) {
-        infoArticleService.deleteInfoArticle(authDetails.getId(), informationId);
+            @CheckId @PathVariable(name = "information_id") Long informationId) {
+        infoArticleService.deleteInfoArticle(informationId);
         return ResponseEntity.noContent().build();
     }
 }
