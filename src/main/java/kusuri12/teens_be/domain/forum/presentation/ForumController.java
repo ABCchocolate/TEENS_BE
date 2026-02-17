@@ -78,6 +78,7 @@ public class ForumController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @CheckAuthor
     @PutMapping("/{forum_id}/comment/{comment_id}")
     public ResponseEntity<Void> updateComment(
             @CheckId @PathVariable(name = "comment_id") Long commentId,
@@ -86,6 +87,7 @@ public class ForumController {
         return ResponseEntity.ok().build();
     }
 
+    @CheckAuthor
     @DeleteMapping("/{forum_id}/comment/{comment_id}")
     public ResponseEntity<Void> deleteComment(
             @CheckId @PathVariable(name = "comment_id") Long commentId) {
