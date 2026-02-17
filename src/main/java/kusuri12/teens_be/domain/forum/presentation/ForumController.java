@@ -76,16 +76,18 @@ public class ForumController {
 
     @PutMapping("/{forum_id}/comment/{comment_id}")
     public ResponseEntity<Void> updateComment(
+            @PathVariable(name = "forum_id") Long forumId,
             @PathVariable(name = "comment_id") Long commentId,
             @RequestBody UpdateCommentRequest request) {
-        commentService.updateComment(commentId, request);
+        commentService.updateComment(forumId, commentId, request);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{forum_id}/comment/{comment_id}")
     public ResponseEntity<Void> deleteComment(
+            @PathVariable(name = "forum_id") Long forumId,
             @PathVariable(name = "comment_id") Long commentId) {
-        commentService.deleteComment(commentId);
+        commentService.deleteComment(forumId, commentId);
         return ResponseEntity.noContent().build();
     }
 }
