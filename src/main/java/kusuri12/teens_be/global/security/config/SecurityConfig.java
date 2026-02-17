@@ -1,11 +1,10 @@
-package kusuri12.teens_be.global.config;
+package kusuri12.teens_be.global.security.config;
 
-import kusuri12.teens_be.global.error.filter.GlobalExceptionFilter;
+import kusuri12.teens_be.global.security.filter.GlobalExceptionFilter;
 import kusuri12.teens_be.global.error.exception.ResponseWithErrorCode;
 import kusuri12.teens_be.global.error.handler.CustomAccessDeniedHandler;
 import kusuri12.teens_be.global.error.handler.CustomAuthenticationEntryPoint;
-import kusuri12.teens_be.global.error.filter.JwtTokenFilter;
-import kusuri12.teens_be.global.jwt.JwtTokenProvider;
+import kusuri12.teens_be.global.security.filter.JwtTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +29,8 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig {
 
     private final JwtTokenFilter jwtTokenFilter;
-    private final ResponseWithErrorCode responseWithErrorCode;
+    private final GlobalExceptionFilter globalExceptionFilter;
+
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
@@ -73,7 +73,7 @@ public class SecurityConfig {
                         .requestMatchers("/information/**").hasRole("ADMIN")
                         .anyRequest().hasRole("USER"))
 
-                .addFilterBefore(globalExceptionFilter(), CorsFilter.class)
+                .addFilterBefore(globalExceptionFilter, CorsFilter.class)
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
@@ -88,10 +88,5 @@ public class SecurityConfig {
         // 인증 처리를 위한 AuthenticationManager를 Bean 등록
         // 주로 로그인 시도 시 사용자 인증 로직에 사용됨
         return config.getAuthenticationManager();
-    }
-
-    @Bean
-    public GlobalExceptionFilter globalExceptionFilter() {
-        return new GlobalExceptionFilter(responseWithErrorCode);
     }
 }

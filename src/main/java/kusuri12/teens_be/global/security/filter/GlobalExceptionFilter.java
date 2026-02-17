@@ -1,4 +1,4 @@
-package kusuri12.teens_be.global.error.filter;
+package kusuri12.teens_be.global.security.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;

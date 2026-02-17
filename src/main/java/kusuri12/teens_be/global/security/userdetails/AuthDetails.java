@@ -1,4 +1,4 @@
-package kusuri12.teens_be.global.auth;
+package kusuri12.teens_be.global.security.userdetails;
 
 import kusuri12.teens_be.domain.user.domain.User;
 import lombok.Getter;
@@ -31,11 +31,14 @@ public class AuthDetails implements UserDetails {
 
         this.id = id;
         this.username = username;
-        this.authorities = authorities;
+        this.authorities = (authorities == null) ? List.of() : authorities;
+        this.role = this.authorities.stream()
+                .findFirst()
+                .map(auth -> auth.getAuthority().replace("ROLE_", ""))
+                .orElse("USER");
 
         this.nickname = null;
         this.email = null;
-        this.role = null;
         this.password = null;
         this.forumCount = 0;
         this.commentCount = 0;

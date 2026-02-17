@@ -1,4 +1,4 @@
-package kusuri12.teens_be.global.config;
+package kusuri12.teens_be.global.aws.config;
 
 import kusuri12.teens_be.global.aws.AwsProperties;
 import lombok.RequiredArgsConstructor;

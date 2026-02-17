@@ -7,9 +7,6 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ForumErrorCode implements ErrorCode {
 
-    // 403
-    NO_AUTHOR(HttpStatus.FORBIDDEN, "FRM_403", "작성자만 수정할 수 있습니다."),
-
     // 404
     FORUM_NOT_FOUND(HttpStatus.NOT_FOUND, "FRM_404_01","해당 게시글을 찾을 수 없습니다."),
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "FRM_404_02", "해당 댓글을 찾을 수 없습니다.");

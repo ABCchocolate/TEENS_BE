@@ -5,7 +5,7 @@ import kusuri12.teens_be.domain.information.presentation.dto.request.UpdateInfor
 import kusuri12.teens_be.domain.information.presentation.dto.response.InformationDetailResponse;
 import kusuri12.teens_be.domain.information.presentation.dto.response.InformationListResponse;
 import kusuri12.teens_be.domain.information.service.InformationService;
-import kusuri12.teens_be.global.auth.AuthDetails;
+import kusuri12.teens_be.global.security.userdetails.AuthDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,18 +47,16 @@ public class InformationController {
 
     @PutMapping("/{information_id}")
     public ResponseEntity<Void> updateInfoArticle(
-            @AuthenticationPrincipal AuthDetails authDetails,
             @PathVariable(name = "information_id") Long informationId,
             @RequestBody UpdateInformationRequest request) {
-        infoArticleService.updateInfoArticle(authDetails.getId(), informationId, request);
+        infoArticleService.updateInfoArticle(informationId, request);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{information_id}")
     public ResponseEntity<Void> deleteInfoArticle(
-            @AuthenticationPrincipal AuthDetails authDetails,
             @PathVariable(name = "information_id") Long informationId) {
-        infoArticleService.deleteInfoArticle(authDetails.getId(), informationId);
+        infoArticleService.deleteInfoArticle(informationId);
         return ResponseEntity.noContent().build();
     }
 }

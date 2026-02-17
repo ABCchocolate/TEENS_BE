@@ -8,16 +8,14 @@ import org.springframework.http.HttpStatus;
 public enum AuthErrorCode implements ErrorCode {
 
     // 400
-    PASSWORD_CONFIRM_WRONG(HttpStatus.BAD_REQUEST, "AUT_400_01", "비밀번호가 일치하지 않습니다."),
-    EMAIL_CODE_EXPIRED(HttpStatus.BAD_REQUEST, "AUT_400_02", "인증 시간이 만료되었습니다. 다시 인증 코드를 발급받아주세요."),
-    EMAIL_CODE_MISMATCH(HttpStatus.BAD_REQUEST, "AUT_400_03", "인증 코드가 일치하지 않습니다. 다시 확인해주세요."),
-    INVALID_TOKEN_PAIR(HttpStatus.BAD_REQUEST, "AUTH_400_04", "Access Token과 Refresh Token의 정보가 일치하지 않습니다."),
-
-    // 401
-    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "AUT_401", "아이디 또는 비밀번호가 일치하지 않습니다."),
+    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "AUT_400_01", "아이디 또는 비밀번호가 일치하지 않습니다."),
+    PASSWORD_CONFIRM_WRONG(HttpStatus.BAD_REQUEST, "AUT_400_02", "비밀번호가 일치하지 않습니다."),
+    INVALID_TOKEN_PAIR(HttpStatus.BAD_REQUEST, "AUT_400_03", "Access Token과 Refresh Token의 정보가 일치하지 않습니다."),
+    EMAIL_CODE_MISMATCH(HttpStatus.BAD_REQUEST, "AUT_400_04", "인증 코드가 일치하지 않습니다. 다시 확인해주세요."),
+    EMAIL_CODE_EXPIRED(HttpStatus.BAD_REQUEST, "AUT_400_05", "인증 시간이 만료되었습니다. 다시 인증 코드를 발급받아주세요."),
 
     // 403
-    TOKEN_THEFT_DETECTED(HttpStatus.FORBIDDEN, "AUTH_403", "토큰 탈취가 의심됩니다. 모든 세션을 종료합니다."),
+    TOKEN_THEFT_DETECTED(HttpStatus.FORBIDDEN, "AUT_403", "토큰 탈취가 의심됩니다. 모든 세션을 종료합니다."),
 
     // 404
     TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "AUT_404", "해당 Refresh Token을 찾을 수 없습니다."),

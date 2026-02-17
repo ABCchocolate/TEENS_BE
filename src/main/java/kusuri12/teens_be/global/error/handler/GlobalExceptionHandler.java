@@ -5,7 +5,10 @@ import kusuri12.teens_be.global.error.exception.ErrorCode;
 import kusuri12.teens_be.global.error.exception.ErrorResponse;
 import kusuri12.teens_be.global.error.exception.GlobalErrorCode;
 import kusuri12.teens_be.global.error.exception.TeensException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -23,9 +26,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 @Slf4j
 @NonNullApi
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private final MessageSource messageSource;
 
     // @Valid 검증 실패 처리
     @Override
@@ -37,8 +43,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("MethodArgumentNotValidException: {}", ex.getMessage());
 
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-                errors.put(error.getField(), error.getDefaultMessage()));
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+            String errorMessage = messageSource.getMessage(error, LocaleContextHolder.getLocale());
+            errors.put(error.getField(), errorMessage);
+        });
 
         ErrorCode errorCode = GlobalErrorCode.VALIDATION_FAILED;
         ErrorResponse response = ErrorResponse.builder()

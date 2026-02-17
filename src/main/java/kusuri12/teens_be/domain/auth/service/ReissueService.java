@@ -3,15 +3,16 @@ package kusuri12.teens_be.domain.auth.service;
 import kusuri12.teens_be.domain.auth.domain.RefreshToken;
 import kusuri12.teens_be.domain.auth.exception.AuthErrorCode;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.ReissueRequest;
+import kusuri12.teens_be.domain.auth.presentation.dto.response.ReissueResponse;
 import kusuri12.teens_be.domain.auth.repository.RefreshTokenRepository;
 import kusuri12.teens_be.domain.user.domain.User;
 import kusuri12.teens_be.domain.user.exception.UserErrorCode;
 import kusuri12.teens_be.domain.user.repository.UserRepository;
-import kusuri12.teens_be.global.auth.AuthDetails;
+import kusuri12.teens_be.global.security.userdetails.AuthDetails;
 import kusuri12.teens_be.global.error.exception.TeensException;
-import kusuri12.teens_be.global.jwt.JwtProperties;
-import kusuri12.teens_be.global.jwt.JwtTokenProvider;
-import kusuri12.teens_be.global.jwt.JwtTokens;
+import kusuri12.teens_be.global.security.jwt.JwtProperties;
+import kusuri12.teens_be.global.security.jwt.JwtTokenProvider;
+import kusuri12.teens_be.global.security.jwt.JwtTokens;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +23,10 @@ import java.util.Objects;
 public class ReissueService {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final JwtProperties jwtProperties;
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public JwtTokens execute(String expiredAccessToken, ReissueRequest request) {
+    public ReissueResponse execute(String expiredAccessToken, ReissueRequest request) {
 
         String requestRefreshToken = request.refreshToken();
 
@@ -43,7 +43,11 @@ public class ReissueService {
         validateTokenTheft(storedRefreshToken, requestRefreshToken);
 
         // 4. 토큰 발급
-        return rotateTokens(username);
+        JwtTokens tokens = rotateTokens(username);
+
+        return ReissueResponse.of(
+                tokens.accessToken(),
+                tokens.refreshToken().getToken());
     }
 
     private void validateTokenPair(String expiredAccessToken, String usernameFromRt) {
@@ -66,11 +70,7 @@ public class ReissueService {
 
         JwtTokens tokens = jwtTokenProvider.generateToken(authDetails);
 
-        refreshTokenRepository.save(new RefreshToken(
-                username,
-                tokens.refreshToken(),
-                jwtProperties.getRefreshTokenExpiration()));
-
+        refreshTokenRepository.save(tokens.refreshToken());
         return tokens;
     }
 }

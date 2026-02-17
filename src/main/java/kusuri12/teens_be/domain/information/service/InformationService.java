@@ -11,6 +11,9 @@ import kusuri12.teens_be.domain.user.domain.User;
 import kusuri12.teens_be.domain.user.exception.UserErrorCode;
 import kusuri12.teens_be.domain.user.repository.UserRepository;
 import kusuri12.teens_be.global.error.exception.TeensException;
+import kusuri12.teens_be.global.security.annotation.CheckAuthor;
+import kusuri12.teens_be.global.security.annotation.CheckId;
+import kusuri12.teens_be.global.security.aspect.Authorizable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +24,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class InformationService {
+public class InformationService implements Authorizable {
 
     private final InformationRepository infoArticleRepository;
     private final UserRepository userRepository;
@@ -85,27 +88,27 @@ public class InformationService {
     }
 
     @Transactional
-    public void updateInfoArticle(Long requestUserId, Long articleId, UpdateInformationRequest request) {
+    @CheckAuthor
+    public void updateInfoArticle(@CheckId Long articleId, UpdateInformationRequest request) {
         Information article = infoArticleRepository.findById(articleId)
                 .orElseThrow(() -> new TeensException(InfoErrorCode.INFO_NOT_FOUND));
-
-        if (!article.getUser().getId().equals(requestUserId)) {
-            throw new TeensException(InfoErrorCode.NO_AUTHOR);
-        }
 
         article.updateTitleAndContent(request.title(), request.content());
     }
 
-    // todo: aop 적용해서 검사 로직 빼버리기
     @Transactional
-    public void deleteInfoArticle(Long requestUserId, Long articleId) {
+    @CheckAuthor
+    public void deleteInfoArticle(@CheckId Long articleId) {
         Information article = infoArticleRepository.findById(articleId)
                 .orElseThrow(() -> new TeensException(InfoErrorCode.INFO_NOT_FOUND));
 
-        if (!article.getUser().getId().equals(requestUserId)) {
-            throw new TeensException(InfoErrorCode.NO_AUTHOR);
-        }
-
         infoArticleRepository.delete(article);
+    }
+
+    @Override
+    public Long getAuthorId(Long resourceId) {
+        return infoArticleRepository.findById(resourceId)
+                .map(article -> article.getUser().getId())
+                .orElseThrow(() -> new TeensException(InfoErrorCode.INFO_NOT_FOUND));
     }
 }

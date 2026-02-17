@@ -1,4 +1,4 @@
-package kusuri12.teens_be.global.jwt;
+package kusuri12.teens_be.global.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -6,7 +6,8 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
-import kusuri12.teens_be.global.auth.AuthDetails;
+import kusuri12.teens_be.domain.auth.domain.RefreshToken;
+import kusuri12.teens_be.global.security.userdetails.AuthDetails;
 import kusuri12.teens_be.global.error.exception.GlobalErrorCode;
 import kusuri12.teens_be.global.error.exception.TeensException;
 import org.springframework.security.core.GrantedAuthority;
@@ -73,7 +74,7 @@ public class JwtTokenProvider {
 
         return JwtTokens.builder()
                 .accessToken(accessToken)
-                .refreshToken(refreshToken)
+                .refreshToken(new RefreshToken(authDetails.getUsername(), refreshToken, jwtProperties.getRefreshTokenExpiration()))
                 .build();
     }
 

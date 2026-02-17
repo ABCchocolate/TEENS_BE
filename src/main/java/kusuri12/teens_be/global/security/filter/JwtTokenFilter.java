@@ -1,4 +1,4 @@
-package kusuri12.teens_be.global.error.filter;
+package kusuri12.teens_be.global.security.filter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -8,10 +8,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kusuri12.teens_be.domain.auth.exception.AuthErrorCode;
 import kusuri12.teens_be.domain.auth.repository.BlackListRepository;
-import kusuri12.teens_be.global.auth.AuthDetails;
+import kusuri12.teens_be.global.security.userdetails.AuthDetails;
 import kusuri12.teens_be.global.error.exception.GlobalErrorCode;
 import kusuri12.teens_be.global.error.exception.TeensException;
-import kusuri12.teens_be.global.jwt.JwtTokenProvider;
+import kusuri12.teens_be.global.security.jwt.JwtTokenProvider;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,21 +23,22 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static kusuri12.teens_be.global.config.SecurityConfig.PERMITTED_AUTH;
+import static kusuri12.teens_be.global.security.config.SecurityConfig.PERMITTED_AUTH;
 
-@Component
 @RequiredArgsConstructor
 // OncePerRequestFilter: 상속받은 클래스가 해당 필터를 한 번 실행할 수 있도록 함
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final BlackListRepository blackListRepository;
+    private final HandlerExceptionResolver handlerExceptionResolver;
     private final AntPathMatcher matcher = new AntPathMatcher(); // url, 파일 경로가 일치하는 지 확인하는 Matcher
 
     @Override
@@ -107,10 +108,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 return;
             }
             throw new TeensException(GlobalErrorCode.EXPIRED_JWT);
-        } catch (TeensException e) {
-            throw e;
         } catch (Exception e) {
-            throw new TeensException(GlobalErrorCode.INVALID_JWT);
+            // 발생한 에러를 @ExceptionHandler로 넘김
+            handlerExceptionResolver.resolveException(request, response, null, e);
+            return;
         }
     }
 }

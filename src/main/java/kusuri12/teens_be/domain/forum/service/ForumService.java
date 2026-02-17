@@ -14,6 +14,9 @@ import kusuri12.teens_be.domain.user.domain.User;
 import kusuri12.teens_be.domain.user.exception.UserErrorCode;
 import kusuri12.teens_be.domain.user.repository.UserRepository;
 import kusuri12.teens_be.global.error.exception.TeensException;
+import kusuri12.teens_be.global.security.annotation.CheckAuthor;
+import kusuri12.teens_be.global.security.annotation.CheckId;
+import kusuri12.teens_be.global.security.aspect.Authorizable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ForumService {
+public class ForumService implements Authorizable {
 
     private final ForumRepository forumRepository;
     private final CommentRepository commentRepository;
@@ -103,7 +106,8 @@ public class ForumService {
     }
 
     @Transactional
-    public void updateForum(Long forumId, UpdateForumRequest request) {
+    @CheckAuthor
+    public void updateForum(@CheckId Long forumId, UpdateForumRequest request) {
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> new TeensException(ForumErrorCode.FORUM_NOT_FOUND));
 
@@ -111,7 +115,8 @@ public class ForumService {
     }
 
     @Transactional
-    public void deleteForum(Long forumId) {
+    @CheckAuthor
+    public void deleteForum(@CheckId Long forumId) {
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> new TeensException(ForumErrorCode.FORUM_NOT_FOUND));
 
@@ -119,5 +124,12 @@ public class ForumService {
         user.decreaseForumCount();
 
         forumRepository.delete(forum);
+    }
+
+    @Override
+    public Long getAuthorId(Long resourceId) {
+        return forumRepository.findById(resourceId)
+                .map(forum -> forum.getUser().getId())
+                .orElseThrow(() -> new TeensException(ForumErrorCode.FORUM_NOT_FOUND));
     }
 }

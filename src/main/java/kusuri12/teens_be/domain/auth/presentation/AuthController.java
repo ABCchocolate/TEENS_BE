@@ -5,12 +5,13 @@ import kusuri12.teens_be.domain.auth.presentation.dto.request.CheckIdRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.ReissueRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.SignInRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.SignUpRequest;
+import kusuri12.teens_be.domain.auth.presentation.dto.response.ReissueResponse;
 import kusuri12.teens_be.domain.auth.presentation.dto.response.SignInResponse;
 import kusuri12.teens_be.domain.auth.service.*;
 import kusuri12.teens_be.domain.auth.service.validator.SignUpValidator;
 import kusuri12.teens_be.global.error.exception.GlobalErrorCode;
 import kusuri12.teens_be.global.error.exception.TeensException;
-import kusuri12.teens_be.global.jwt.JwtTokens;
+import kusuri12.teens_be.global.security.jwt.JwtTokens;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
@@ -34,7 +35,9 @@ public class AuthController {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.addValidators(signUpValidator);
+        if (binder.getTarget() != null && signUpValidator.supports(binder.getTarget().getClass())) {
+            binder.addValidators(signUpValidator);
+        }
     }
 
     @PostMapping("/sign-up")
@@ -70,7 +73,7 @@ public class AuthController {
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<JwtTokens> reissue(
+    public ResponseEntity<ReissueResponse> reissue(
             @RequestHeader("Authorization") String accessTokenHeader,
             @RequestBody ReissueRequest request) {
         String accessToken = extractToken(accessTokenHeader);

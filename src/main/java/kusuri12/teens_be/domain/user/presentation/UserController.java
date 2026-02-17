@@ -6,7 +6,7 @@ import kusuri12.teens_be.domain.user.presentation.dto.request.PasswordRequest;
 import kusuri12.teens_be.domain.user.presentation.dto.response.UserMeResponse;
 import kusuri12.teens_be.domain.user.service.validator.PasswordValidator;
 import kusuri12.teens_be.domain.user.service.UserMyPageService;
-import kusuri12.teens_be.global.auth.AuthDetails;
+import kusuri12.teens_be.global.security.userdetails.AuthDetails;
 import kusuri12.teens_be.global.aws.s3.S3UploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +27,9 @@ public class UserController {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.addValidators(passwordValidator);
+        if (binder.getTarget() != null && passwordValidator.supports(binder.getTarget().getClass())) {
+            binder.addValidators(passwordValidator);
+        }
     }
 
     @GetMapping
