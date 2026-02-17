@@ -59,7 +59,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain chain) throws ServletException, IOException {
 
         String jwt = jwtTokenProvider.getToken(request);
-        String path = request.getRequestURI();
+        String path = request.getServletPath();
 
         if (jwt == null) {
             chain.doFilter(request, response);
@@ -68,7 +68,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         try {
             if (blackListRepository.existsById(jwt)) {
-                if ("/auth/sign-out".equals(path)) {
+                if (matcher.match("/auth/sign-out", path)) {
                     // 이미 로그아웃된 경우 필터에서 200 OK로 조기 종료
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.setContentType("application/json;charset=UTF-8");
@@ -102,7 +102,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
             chain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
-            if (path.equals("/auth/reissue")) {
+            if (matcher.match("/auth/reissue", path)) {
                 chain.doFilter(request, response);
                 return;
             }
