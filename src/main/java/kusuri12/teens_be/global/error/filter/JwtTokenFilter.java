@@ -107,6 +107,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 return;
             }
             throw new TeensException(GlobalErrorCode.EXPIRED_JWT);
+        } catch (TeensException e) {
+            throw e;
         } catch (Exception e) {
             throw new TeensException(GlobalErrorCode.INVALID_JWT);
         }
