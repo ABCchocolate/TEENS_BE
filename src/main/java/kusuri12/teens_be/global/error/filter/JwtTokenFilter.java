@@ -84,7 +84,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             String authoritiesStr = claims.get(JwtTokenProvider.CLAIM_AUTHORITIES, String.class);
             String tokenType = claims.get(JwtTokenProvider.CLAIM_TOKEN_TYPE, String.class);
 
-            if ("ACCESS".equals(tokenType) && username != null && userId != null) {
+            if ("ACCESS".equals(tokenType) && username != null && userId != null && authoritiesStr != null) {
 
                 // 권한 파싱
                 List<GrantedAuthority> authorities = Arrays.stream(authoritiesStr.split(","))
