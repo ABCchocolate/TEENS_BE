@@ -85,6 +85,8 @@ public class JwtTokenProvider {
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
+        } catch (ExpiredJwtException e) {
+            throw e;
         } catch (Exception e){
             throw new TeensException(GlobalErrorCode.INVALID_JWT);
         }
