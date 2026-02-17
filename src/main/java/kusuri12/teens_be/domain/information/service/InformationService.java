@@ -11,6 +11,8 @@ import kusuri12.teens_be.domain.user.domain.User;
 import kusuri12.teens_be.domain.user.exception.UserErrorCode;
 import kusuri12.teens_be.domain.user.repository.UserRepository;
 import kusuri12.teens_be.global.error.exception.TeensException;
+import kusuri12.teens_be.global.security.annotation.CheckAuthor;
+import kusuri12.teens_be.global.security.annotation.CheckId;
 import kusuri12.teens_be.global.security.aspect.Authorizable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -86,7 +88,8 @@ public class InformationService implements Authorizable {
     }
 
     @Transactional
-    public void updateInfoArticle(Long articleId, UpdateInformationRequest request) {
+    @CheckAuthor
+    public void updateInfoArticle(@CheckId Long articleId, UpdateInformationRequest request) {
         Information article = infoArticleRepository.findById(articleId)
                 .orElseThrow(() -> new TeensException(InfoErrorCode.INFO_NOT_FOUND));
 
@@ -94,7 +97,8 @@ public class InformationService implements Authorizable {
     }
 
     @Transactional
-    public void deleteInfoArticle(Long articleId) {
+    @CheckAuthor
+    public void deleteInfoArticle(@CheckId Long articleId) {
         Information article = infoArticleRepository.findById(articleId)
                 .orElseThrow(() -> new TeensException(InfoErrorCode.INFO_NOT_FOUND));
 

@@ -5,6 +5,7 @@ import kusuri12.teens_be.global.error.exception.GlobalErrorCode;
 import kusuri12.teens_be.global.error.exception.TeensException;
 import kusuri12.teens_be.global.security.annotation.CheckId;
 import kusuri12.teens_be.global.security.util.SecurityUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -16,11 +17,11 @@ import java.lang.annotation.Annotation;
 
 @Aspect
 @Component
+@Slf4j
 public class AuthorCheckAspect {
 
     @Around("@annotation(kusuri12.teens_be.global.security.annotation.CheckAuthor)")
     public Object check(ProceedingJoinPoint joinPoint) throws Throwable {
-
         Long resourceId = getCheckId(joinPoint);
 
         // 현재 실행 중인 서비스 객체(Target)를 가져와서 인터페이스로 캐스팅
