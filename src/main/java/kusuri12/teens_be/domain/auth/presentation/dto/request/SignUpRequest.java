@@ -3,22 +3,26 @@ package kusuri12.teens_be.domain.auth.presentation.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import kusuri12.teens_be.global.validation.anotation.Ban;
 
 public record SignUpRequest(
-        @NotBlank(message = "{validation.username.blank}")
-        @Size(min = 2, max = 20, message = "{validation.username.length}")
+
+        @NotBlank
+        @Size(min = 2, max = 20)
+        @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-z0-9-_]+$")
+        @Ban
         String username,
 
-        @NotBlank(message = "{validation.email.blank}")
+        @NotBlank
+        @Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$")
         String email,
 
-        @NotBlank(message = "{validation.password.blank}")
-        @Size(min = 8, max = 60, message = "{validation.password.length}")
-        @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9._-]{8,60}$",
-                message = "{validation.password.pattern}")
+        @NotBlank
+        @Size(min = 8, max = 60)
+        @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*\\W)(?=\\S+$).+$")
         String password,
 
-        @NotBlank(message = "{validation.password.blank}")
+        @NotBlank
         String confirmPassword
 ) {
 }

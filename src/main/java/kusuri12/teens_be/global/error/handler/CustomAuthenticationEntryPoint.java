@@ -2,7 +2,7 @@ package kusuri12.teens_be.global.error.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kusuri12.teens_be.global.error.exception.ErrorCode;
+import kusuri12.teens_be.global.error.exception.GlobalErrorCode;
 import kusuri12.teens_be.global.error.exception.ResponseWithErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +27,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         log.warn("Unauthorized Access Attempt: {}", authException.getMessage());
         log.warn("Request URI: {}", request.getRequestURI());
 
-        responseWithErrorCode.response(response, ErrorCode.UNAUTHORIZED_ACCESS);
+        responseWithErrorCode.response(response, GlobalErrorCode.UNAUTHORIZED_ACCESS);
     }
 }

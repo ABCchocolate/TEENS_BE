@@ -1,10 +1,10 @@
 package kusuri12.teens_be.global.config;
 
-import kusuri12.teens_be.global.error.GlobalExceptionFilter;
+import kusuri12.teens_be.global.error.filter.GlobalExceptionFilter;
 import kusuri12.teens_be.global.error.exception.ResponseWithErrorCode;
 import kusuri12.teens_be.global.error.handler.CustomAccessDeniedHandler;
 import kusuri12.teens_be.global.error.handler.CustomAuthenticationEntryPoint;
-import kusuri12.teens_be.global.jwt.JwtTokenFilter;
+import kusuri12.teens_be.global.error.filter.JwtTokenFilter;
 import kusuri12.teens_be.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +29,7 @@ import org.springframework.web.filter.CorsFilter;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenFilter jwtTokenFilter;
     private final ResponseWithErrorCode responseWithErrorCode;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
@@ -74,7 +74,7 @@ public class SecurityConfig {
                         .anyRequest().hasRole("USER"))
 
                 .addFilterBefore(globalExceptionFilter(), CorsFilter.class)
-                .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
@@ -93,10 +93,5 @@ public class SecurityConfig {
     @Bean
     public GlobalExceptionFilter globalExceptionFilter() {
         return new GlobalExceptionFilter(responseWithErrorCode);
-    }
-
-    @Bean
-    public JwtTokenFilter jwtTokenFilter() {
-        return new JwtTokenFilter(jwtTokenProvider);
     }
 }

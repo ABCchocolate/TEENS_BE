@@ -1,31 +1,35 @@
 package kusuri12.teens_be.domain.auth.service;
 
-import kusuri12.teens_be.domain.user.domain.repository.UserRepository;
+import kusuri12.teens_be.domain.auth.domain.BlackList;
+import kusuri12.teens_be.domain.auth.repository.BlackListRepository;
+import kusuri12.teens_be.domain.auth.repository.RefreshTokenRepository;
 import kusuri12.teens_be.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class SignOutService {
 
-    private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final BlackListRepository blackListRepository;
 
-    public void signOut(String accessToken, String username) {
-        jwtTokenProvider.deleteRefreshToken(username);
+    // 로그아웃
+    // 액세스 토큰 블랙리스트에 등록
+    // 리프레시 토큰 레디스에서 삭제
+    // username 반환
+    public String execute(String accessToken) {
+        String username = jwtTokenProvider.parse(accessToken).getSubject();
 
-        long expiration = jwtTokenProvider.getExpiration(accessToken);
+        refreshTokenRepository.deleteById(username);
+
+        long expiration = jwtTokenProvider.getRemainTime(accessToken);
 
         if (expiration > 0) {
-            jwtTokenProvider.addToBlackList(accessToken, username, expiration);
+            blackListRepository.save(new BlackList(accessToken, username, expiration));
         }
-    }
 
-    @Transactional
-    public void quit(String accessToken, String username) {
-        signOut(accessToken, username);
-        userRepository.deleteByUsername(username);
+        return username;
     }
 }

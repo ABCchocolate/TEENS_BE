@@ -5,14 +5,15 @@ import kusuri12.teens_be.domain.auth.presentation.dto.request.CheckIdRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.ReissueRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.SignInRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.SignUpRequest;
-import kusuri12.teens_be.domain.auth.presentation.dto.response.CheckIdResponse;
 import kusuri12.teens_be.domain.auth.presentation.dto.response.SignInResponse;
 import kusuri12.teens_be.domain.auth.service.*;
-import kusuri12.teens_be.global.auth.AuthDetails;
+import kusuri12.teens_be.domain.auth.service.validator.SignUpValidator;
+import kusuri12.teens_be.global.error.exception.GlobalErrorCode;
+import kusuri12.teens_be.global.error.exception.TeensException;
 import kusuri12.teens_be.global.jwt.JwtTokens;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,45 +25,63 @@ public class AuthController {
     private final SignInService signInService;
     private final CheckIdService checkIdService;
     private final SignOutService signOutService;
+    private final QuitService quitService;
     private final ReissueService reissueService;
 
+    private final SignUpValidator signUpValidator;
+
+    private static final String BEARER_PREFIX = "Bearer ";
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.addValidators(signUpValidator);
+    }
+
     @PostMapping("/sign-up")
-    public ResponseEntity<Void> signUp(@Valid @RequestBody SignUpRequest request) {
-        signUpService.signUp(request);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<SignInResponse> signUp(@Valid @RequestBody SignUpRequest request) {
+        return ResponseEntity.ok(signUpService.execute(request));
     }
 
     @PostMapping("/sign-in")
     public ResponseEntity<SignInResponse> signIn(@Valid @RequestBody SignInRequest request) {
-        return ResponseEntity.ok(signInService.signIn(request));
+        return ResponseEntity.ok(signInService.execute(request));
     }
 
     @GetMapping("/check-id")
-    public ResponseEntity<CheckIdResponse> checkId(@ModelAttribute CheckIdRequest request) {
-        return ResponseEntity.ok(checkIdService.checkId(request));
+    public ResponseEntity<Void> checkId(@ModelAttribute CheckIdRequest request) {
+        checkIdService.execute(request);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/sign-out")
     public ResponseEntity<Void> signOut(
-            @AuthenticationPrincipal AuthDetails authDetails,
             @RequestHeader("Authorization") String accessTokenHeader) {
-        String accessToken = accessTokenHeader.substring(7); // "Bearer " 제거
-        signOutService.signOut(accessToken, authDetails.getUsername());
+        String accessToken = extractToken(accessTokenHeader);
+        signOutService.execute(accessToken);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/quit")
     public ResponseEntity<Void> quit(
-            @AuthenticationPrincipal AuthDetails authDetails,
             @RequestHeader("Authorization") String accessTokenHeader) {
-        String accessToken = accessTokenHeader.substring(7);
-        signOutService.quit(accessToken, authDetails.getUsername());
+        String accessToken = extractToken(accessTokenHeader);
+        quitService.execute(accessToken);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/reissue")
     public ResponseEntity<JwtTokens> reissue(
+            @RequestHeader("Authorization") String accessTokenHeader,
             @RequestBody ReissueRequest request) {
-        return ResponseEntity.ok(reissueService.reissue(request));
+        String accessToken = extractToken(accessTokenHeader);
+        return ResponseEntity.ok(reissueService.execute(accessToken, request));
+    }
+
+    // bearer 제거 유틸 메서드
+    private String extractToken(String authorizationHeader) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith(BEARER_PREFIX)) {
+            throw new TeensException(GlobalErrorCode.INVALID_JWT);
+        }
+        return authorizationHeader.substring(7);
     }
 }

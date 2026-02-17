@@ -3,6 +3,7 @@ package kusuri12.teens_be.global.error.handler;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kusuri12.teens_be.global.error.exception.ErrorCode;
+import kusuri12.teens_be.global.error.exception.GlobalErrorCode;
 import kusuri12.teens_be.global.error.exception.ResponseWithErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
         log.error("Access Denied: {}", accessDeniedException.getMessage(), accessDeniedException);
 
-        responseWithErrorCode.response(response, ErrorCode.FORBIDDEN_ACCESS);
+        responseWithErrorCode.response(response, GlobalErrorCode.FORBIDDEN_ACCESS);
     }
 }

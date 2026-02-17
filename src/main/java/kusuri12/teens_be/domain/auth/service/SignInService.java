@@ -19,7 +19,8 @@ public class SignInService {
     private final AuthenticationManager authenticationManager;
 
     @Transactional
-    public SignInResponse signIn(SignInRequest request) {
+    public SignInResponse execute(SignInRequest request) {
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.username(), request.password())
         );

@@ -1,18 +1,19 @@
 package kusuri12.teens_be.domain.forum.service;
 
-import kusuri12.teens_be.domain.comment.domain.Comment;
-import kusuri12.teens_be.domain.comment.domain.repository.CommentRepository;
-import kusuri12.teens_be.domain.comment.presentation.dto.response.CommentResponse;
-import kusuri12.teens_be.domain.forum.exception.ForumNotFoundException;
+import kusuri12.teens_be.domain.forum.domain.Comment;
+import kusuri12.teens_be.domain.forum.exception.ForumErrorCode;
+import kusuri12.teens_be.domain.forum.presentation.dto.response.CommentResponse;
+import kusuri12.teens_be.domain.forum.repository.CommentRepository;
 import kusuri12.teens_be.domain.forum.presentation.dto.request.CreateForumRequest;
 import kusuri12.teens_be.domain.forum.presentation.dto.request.UpdateForumRequest;
 import kusuri12.teens_be.domain.forum.presentation.dto.response.ForumDetailResponse;
 import kusuri12.teens_be.domain.forum.presentation.dto.response.ForumListResponse;
 import kusuri12.teens_be.domain.forum.domain.Forum;
-import kusuri12.teens_be.domain.forum.domain.repository.ForumRepository;
+import kusuri12.teens_be.domain.forum.repository.ForumRepository;
 import kusuri12.teens_be.domain.user.domain.User;
-import kusuri12.teens_be.domain.user.domain.repository.UserRepository;
-import kusuri12.teens_be.domain.user.exception.UserNotFoundException;
+import kusuri12.teens_be.domain.user.exception.UserErrorCode;
+import kusuri12.teens_be.domain.user.repository.UserRepository;
+import kusuri12.teens_be.global.error.exception.TeensException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +29,7 @@ public class ForumService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ForumListResponse> getAllForums() {
         List<Forum> forums = forumRepository.findAllOrderByCreatedAtDesc();
 
@@ -43,7 +44,7 @@ public class ForumService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ForumListResponse> searchForums(String keyword) {
         List<Forum> forums = forumRepository.searchByKeyword(keyword);
 
@@ -58,13 +59,13 @@ public class ForumService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ForumDetailResponse getForumDetail(Long forumId) {
         Forum forum = forumRepository.findById(forumId)
-                .orElseThrow(() -> ForumNotFoundException.EXCEPTION);
+                .orElseThrow(() -> new TeensException(ForumErrorCode.FORUM_NOT_FOUND));
 
+        // 댓글 가져오기
         List<Comment> comments = commentRepository.findByForumIdOrderByCreatedAtAsc(forumId);
-
         List<CommentResponse> commentResponses = comments.stream()
                 .map(comment -> CommentResponse.builder()
                         .id(comment.getId())
@@ -74,6 +75,7 @@ public class ForumService {
                         .build())
                 .collect(Collectors.toList());
 
+        // 게시글 정보 반환
         return ForumDetailResponse.builder()
                 .id(forum.getId())
                 .title(forum.getTitle())
@@ -87,11 +89,11 @@ public class ForumService {
     @Transactional
     public void createForum(Long userId, CreateForumRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> UserNotFoundException.EXCEPTION);
+                .orElseThrow(() -> new TeensException(UserErrorCode.USER_NOT_FOUND));
 
         Forum forum = Forum.builder()
-                .title(request.getTitle())
-                .content(request.getContent())
+                .title(request.title())
+                .content(request.content())
                 .user(user)
                 .build();
 
@@ -103,15 +105,15 @@ public class ForumService {
     @Transactional
     public void updateForum(Long forumId, UpdateForumRequest request) {
         Forum forum = forumRepository.findById(forumId)
-                .orElseThrow(() -> ForumNotFoundException.EXCEPTION);
+                .orElseThrow(() -> new TeensException(ForumErrorCode.FORUM_NOT_FOUND));
 
-        forum.updateTitleAndContent(request.getTitle(), request.getContent());
+        forum.updateTitleAndContent(request.title(), request.content());
     }
 
     @Transactional
     public void deleteForum(Long forumId) {
         Forum forum = forumRepository.findById(forumId)
-                .orElseThrow(() -> ForumNotFoundException.EXCEPTION);
+                .orElseThrow(() -> new TeensException(ForumErrorCode.FORUM_NOT_FOUND));
 
         User user = forum.getUser();
         user.decreaseForumCount();
