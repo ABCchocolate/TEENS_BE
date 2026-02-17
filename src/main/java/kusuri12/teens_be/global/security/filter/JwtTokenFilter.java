@@ -23,6 +23,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -38,6 +39,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final BlackListRepository blackListRepository;
+    private final HandlerExceptionResolver handlerExceptionResolver;
     private final AntPathMatcher matcher = new AntPathMatcher(); // url, 파일 경로가 일치하는 지 확인하는 Matcher
 
     @Override
@@ -107,10 +109,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 return;
             }
             throw new TeensException(GlobalErrorCode.EXPIRED_JWT);
-        } catch (TeensException e) {
-            throw e;
         } catch (Exception e) {
-            throw new TeensException(GlobalErrorCode.INVALID_JWT);
+            // 발생한 에러를 @ExceptionHandler로 넘김
+            handlerExceptionResolver.resolveException(request, response, null, e);
         }
     }
 }
