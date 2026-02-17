@@ -31,8 +31,8 @@ public class AuthDetails implements UserDetails {
 
         this.id = id;
         this.username = username;
-        this.authorities = authorities;
-        this.role = authorities.stream()
+        this.authorities = (authorities == null) ? List.of() : authorities;
+        this.role = this.authorities.stream()
                 .findFirst()
                 .map(auth -> auth.getAuthority().replace("ROLE_", ""))
                 .orElse("USER");

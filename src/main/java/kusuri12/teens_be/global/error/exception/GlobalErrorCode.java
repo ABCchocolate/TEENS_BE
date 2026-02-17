@@ -18,8 +18,8 @@ public enum GlobalErrorCode implements ErrorCode {
     EXPIRED_JWT(HttpStatus.UNAUTHORIZED, "GLB_401_03", "만료된 토큰입니다."),
 
     // 403
-    FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "GLB_403", "접근 권한이 없습니다."),
-    NO_AUTHOR(HttpStatus.FORBIDDEN, "GLB_403", "작성자 또는 관리자만 수정할 수 있습니다."),
+    FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "GLB_403_01", "접근 권한이 없습니다."),
+    NO_AUTHOR(HttpStatus.FORBIDDEN, "GLB_403_02", "작성자 또는 관리자만 수정할 수 있습니다."),
 
     // 404
     NOT_FOUND(HttpStatus.NOT_FOUND, "GLB_404", "해당 리소스를 찾을 수 없습니다."),

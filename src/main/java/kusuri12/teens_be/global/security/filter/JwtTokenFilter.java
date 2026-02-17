@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 
 import static kusuri12.teens_be.global.security.config.SecurityConfig.PERMITTED_AUTH;
 
-@Component
 @RequiredArgsConstructor
 // OncePerRequestFilter: 상속받은 클래스가 해당 필터를 한 번 실행할 수 있도록 함
 public class JwtTokenFilter extends OncePerRequestFilter {
@@ -112,6 +111,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             // 발생한 에러를 @ExceptionHandler로 넘김
             handlerExceptionResolver.resolveException(request, response, null, e);
+            return;
         }
     }
 }

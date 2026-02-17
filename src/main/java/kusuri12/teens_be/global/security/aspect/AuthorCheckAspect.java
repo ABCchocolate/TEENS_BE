@@ -40,6 +40,9 @@ public class AuthorCheckAspect {
             if (!authorId.equals(currentUserId) && !isAdmin) {
                 throw new TeensException(GlobalErrorCode.NO_AUTHOR);
             }
+        } else {
+            log.error("🚨 보안 설정 오류: {} 클래스가 Authorizable을 구현하지 않았습니다.", target.getClass().getSimpleName());
+            throw new TeensException(GlobalErrorCode.INTERNAL_SERVER_ERROR, "Not Implement Authorizable");
         }
 
         return joinPoint.proceed();
@@ -56,6 +59,9 @@ public class AuthorCheckAspect {
         for (int i = 0; i < parameterAnnotations.length; i++) {
             for (Annotation annotation : parameterAnnotations[i]) {
                 if (annotation instanceof CheckId) {
+                    if (!(args[i] instanceof Long)) {
+                        throw new TeensException(GlobalErrorCode.INVALID_REQUEST);
+                    }
                     resourceId = (Long) args[i];
                     break;
                 }
