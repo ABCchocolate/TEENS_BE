@@ -5,6 +5,7 @@ import kusuri12.teens_be.domain.auth.presentation.dto.request.CheckIdRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.ReissueRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.SignInRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.request.SignUpRequest;
+import kusuri12.teens_be.domain.auth.presentation.dto.response.ReissueResponse;
 import kusuri12.teens_be.domain.auth.presentation.dto.response.SignInResponse;
 import kusuri12.teens_be.domain.auth.service.*;
 import kusuri12.teens_be.domain.auth.service.validator.SignUpValidator;
@@ -72,7 +73,7 @@ public class AuthController {
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<JwtTokens> reissue(
+    public ResponseEntity<ReissueResponse> reissue(
             @RequestHeader("Authorization") String accessTokenHeader,
             @RequestBody ReissueRequest request) {
         String accessToken = extractToken(accessTokenHeader);
