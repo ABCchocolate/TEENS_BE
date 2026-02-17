@@ -8,11 +8,11 @@ import kusuri12.teens_be.domain.auth.presentation.dto.request.SignUpRequest;
 import kusuri12.teens_be.domain.auth.presentation.dto.response.SignInResponse;
 import kusuri12.teens_be.domain.auth.service.*;
 import kusuri12.teens_be.domain.auth.service.validator.SignUpValidator;
-import kusuri12.teens_be.global.auth.AuthDetails;
+import kusuri12.teens_be.global.error.exception.GlobalErrorCode;
+import kusuri12.teens_be.global.error.exception.TeensException;
 import kusuri12.teens_be.global.jwt.JwtTokens;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +29,8 @@ public class AuthController {
     private final ReissueService reissueService;
 
     private final SignUpValidator signUpValidator;
+
+    private static final String BEARER_PREFIX = "Bearer ";
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -54,7 +56,7 @@ public class AuthController {
     @PostMapping("/sign-out")
     public ResponseEntity<Void> signOut(
             @RequestHeader("Authorization") String accessTokenHeader) {
-        String accessToken = accessTokenHeader.substring(7); // "Bearer " 제거
+        String accessToken = extractToken(accessTokenHeader);
         signOutService.execute(accessToken);
         return ResponseEntity.noContent().build();
     }
@@ -62,7 +64,7 @@ public class AuthController {
     @DeleteMapping("/quit")
     public ResponseEntity<Void> quit(
             @RequestHeader("Authorization") String accessTokenHeader) {
-        String accessToken = accessTokenHeader.substring(7);
+        String accessToken = extractToken(accessTokenHeader);
         quitService.execute(accessToken);
         return ResponseEntity.noContent().build();
     }
@@ -71,7 +73,15 @@ public class AuthController {
     public ResponseEntity<JwtTokens> reissue(
             @RequestHeader("Authorization") String accessTokenHeader,
             @RequestBody ReissueRequest request) {
-        String accessToken = accessTokenHeader.substring(7);
+        String accessToken = extractToken(accessTokenHeader);
         return ResponseEntity.ok(reissueService.execute(accessToken, request));
+    }
+
+    // bearer 제거 유틸 메서드
+    private String extractToken(String authorizationHeader) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith(BEARER_PREFIX)) {
+            throw new TeensException(GlobalErrorCode.INVALID_JWT);
+        }
+        return authorizationHeader.substring(7);
     }
 }
