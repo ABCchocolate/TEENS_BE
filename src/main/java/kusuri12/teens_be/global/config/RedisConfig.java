@@ -51,11 +51,13 @@ public class RedisConfig {
 
         // Default typing 설정: 보안 강화
         PolymorphicTypeValidator validator = BasicPolymorphicTypeValidator.builder()
-                .allowIfBaseType(Object.class) // 기본적으로 Object 허용
                 .allowIfSubType("kusuri12.teens_be.") // 프로젝트 패키지로 제한
                 .build();
-        objectMapper.activateDefaultTyping(validator, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.valueOf("@class"));
-
+        objectMapper.activateDefaultTypingAsProperty(
+                validator,
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                "@class"
+        );
         return new GenericJackson2JsonRedisSerializer(objectMapper);
     }
 }
