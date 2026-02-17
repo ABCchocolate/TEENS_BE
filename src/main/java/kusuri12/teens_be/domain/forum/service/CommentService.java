@@ -10,6 +10,7 @@ import kusuri12.teens_be.domain.forum.repository.ForumRepository;
 import kusuri12.teens_be.domain.user.domain.User;
 import kusuri12.teens_be.domain.user.exception.UserErrorCode;
 import kusuri12.teens_be.domain.user.repository.UserRepository;
+import kusuri12.teens_be.global.error.exception.GlobalErrorCode;
 import kusuri12.teens_be.global.error.exception.TeensException;
 import kusuri12.teens_be.global.security.annotation.CheckAuthor;
 import kusuri12.teens_be.global.security.annotation.CheckId;
@@ -48,24 +49,34 @@ public class CommentService implements Authorizable {
 
     @Transactional
     @CheckAuthor
-    public void updateComment(@CheckId Long commentId, UpdateCommentRequest request) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new TeensException(ForumErrorCode.COMMENT_NOT_FOUND));
+    public void updateComment(Long forumId, @CheckId Long commentId, UpdateCommentRequest request) {
 
+        Comment comment = getValidatedComment(forumId, commentId);
         comment.updateContent(request.content());
     }
 
     @Transactional
     @CheckAuthor
-    public void deleteComment(@CheckId Long commentId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new TeensException(ForumErrorCode.COMMENT_NOT_FOUND));
+    public void deleteComment(Long forumId, @CheckId Long commentId) {
+
+        Comment comment = getValidatedComment(forumId, commentId);
 
         // CommentCount 감소
         User user = comment.getUser();
         user.decreaseCommentCount();
 
         commentRepository.delete(comment);
+    }
+
+    private Comment getValidatedComment(Long forumId, Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new TeensException(ForumErrorCode.COMMENT_NOT_FOUND));
+
+        if (!comment.getForum().getId().equals(forumId)) {
+            throw new TeensException(GlobalErrorCode.RESOURCE_MISMATCH);
+        }
+
+        return comment;
     }
 
     @Override

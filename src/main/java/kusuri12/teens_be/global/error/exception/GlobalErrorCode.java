@@ -1,7 +1,6 @@
 package kusuri12.teens_be.global.error.exception;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
@@ -22,7 +21,7 @@ public enum GlobalErrorCode implements ErrorCode {
     NO_AUTHOR(HttpStatus.FORBIDDEN, "GLB_403_02", "작성자 또는 관리자만 수정할 수 있습니다."),
 
     // 404
-    NOT_FOUND(HttpStatus.NOT_FOUND, "GLB_404", "해당 리소스를 찾을 수 없습니다."),
+    RESOURCE_MISMATCH(HttpStatus.NOT_FOUND, "GLB_404", "해당 리소스를 찾을 수 없습니다."),
 
     // 서버 오류
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "GLB_500", "내부 서버 오류");
