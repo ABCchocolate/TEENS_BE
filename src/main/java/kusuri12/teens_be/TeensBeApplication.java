@@ -1,6 +1,6 @@
 package kusuri12.teens_be;
 
-import kusuri12.teens_be.global.jwt.JwtProperties;
+import kusuri12.teens_be.global.security.jwt.JwtProperties;
 import kusuri12.teens_be.global.aws.AwsProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

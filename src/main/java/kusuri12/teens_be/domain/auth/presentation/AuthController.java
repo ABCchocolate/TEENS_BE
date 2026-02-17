@@ -10,7 +10,7 @@ import kusuri12.teens_be.domain.auth.service.*;
 import kusuri12.teens_be.domain.auth.service.validator.SignUpValidator;
 import kusuri12.teens_be.global.error.exception.GlobalErrorCode;
 import kusuri12.teens_be.global.error.exception.TeensException;
-import kusuri12.teens_be.global.jwt.JwtTokens;
+import kusuri12.teens_be.global.security.jwt.JwtTokens;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;

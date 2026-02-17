@@ -1,8 +1,8 @@
-package kusuri12.teens_be.global.config;
+package kusuri12.teens_be.global.security.config;
 
 import kusuri12.teens_be.domain.auth.repository.BlackListRepository;
-import kusuri12.teens_be.global.error.filter.JwtTokenFilter;
-import kusuri12.teens_be.global.jwt.JwtTokenProvider;
+import kusuri12.teens_be.global.security.filter.JwtTokenFilter;
+import kusuri12.teens_be.global.security.jwt.JwtTokenProvider;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

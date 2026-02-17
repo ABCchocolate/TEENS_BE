@@ -1,4 +1,4 @@
-package kusuri12.teens_be.global.jwt;
+package kusuri12.teens_be.global.security.jwt;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -8,7 +8,7 @@ import kusuri12.teens_be.domain.forum.presentation.dto.request.UpdateForumReques
 import kusuri12.teens_be.domain.forum.presentation.dto.response.ForumDetailResponse;
 import kusuri12.teens_be.domain.forum.presentation.dto.response.ForumListResponse;
 import kusuri12.teens_be.domain.forum.service.ForumService;
-import kusuri12.teens_be.global.auth.AuthDetails;
+import kusuri12.teens_be.global.security.userdetails.AuthDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

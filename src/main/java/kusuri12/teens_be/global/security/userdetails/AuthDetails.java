@@ -1,4 +1,4 @@
-package kusuri12.teens_be.global.auth;
+package kusuri12.teens_be.global.security.userdetails;
 
 import kusuri12.teens_be.domain.user.domain.User;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package kusuri12.teens_be.global.error.filter;
+package kusuri12.teens_be.global.security.filter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -8,10 +8,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kusuri12.teens_be.domain.auth.exception.AuthErrorCode;
 import kusuri12.teens_be.domain.auth.repository.BlackListRepository;
-import kusuri12.teens_be.global.auth.AuthDetails;
+import kusuri12.teens_be.global.security.userdetails.AuthDetails;
 import kusuri12.teens_be.global.error.exception.GlobalErrorCode;
 import kusuri12.teens_be.global.error.exception.TeensException;
-import kusuri12.teens_be.global.jwt.JwtTokenProvider;
+import kusuri12.teens_be.global.security.jwt.JwtTokenProvider;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static kusuri12.teens_be.global.config.SecurityConfig.PERMITTED_AUTH;
+import static kusuri12.teens_be.global.security.config.SecurityConfig.PERMITTED_AUTH;
 
 @Component
 @RequiredArgsConstructor

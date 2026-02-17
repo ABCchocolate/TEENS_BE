@@ -7,11 +7,11 @@ import kusuri12.teens_be.domain.auth.repository.RefreshTokenRepository;
 import kusuri12.teens_be.domain.user.domain.User;
 import kusuri12.teens_be.domain.user.exception.UserErrorCode;
 import kusuri12.teens_be.domain.user.repository.UserRepository;
-import kusuri12.teens_be.global.auth.AuthDetails;
+import kusuri12.teens_be.global.security.userdetails.AuthDetails;
 import kusuri12.teens_be.global.error.exception.TeensException;
-import kusuri12.teens_be.global.jwt.JwtProperties;
-import kusuri12.teens_be.global.jwt.JwtTokenProvider;
-import kusuri12.teens_be.global.jwt.JwtTokens;
+import kusuri12.teens_be.global.security.jwt.JwtProperties;
+import kusuri12.teens_be.global.security.jwt.JwtTokenProvider;
+import kusuri12.teens_be.global.security.jwt.JwtTokens;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -3,7 +3,7 @@ package kusuri12.teens_be.domain.auth.service;
 import kusuri12.teens_be.domain.auth.domain.BlackList;
 import kusuri12.teens_be.domain.auth.repository.BlackListRepository;
 import kusuri12.teens_be.domain.auth.repository.RefreshTokenRepository;
-import kusuri12.teens_be.global.jwt.JwtTokenProvider;
+import kusuri12.teens_be.global.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

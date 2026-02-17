@@ -1,4 +1,4 @@
-package kusuri12.teens_be.global.config;
+package kusuri12.teens_be.global.security.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
