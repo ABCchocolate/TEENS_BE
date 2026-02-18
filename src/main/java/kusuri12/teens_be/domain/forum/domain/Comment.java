@@ -5,8 +5,8 @@ import kusuri12.teens_be.domain.common.BaseTimeEntity;
 import kusuri12.teens_be.domain.forum.exception.ForumErrorCode;
 import kusuri12.teens_be.domain.user.domain.User;
 import kusuri12.teens_be.domain.user.exception.UserErrorCode;
+import kusuri12.teens_be.global.validation.util.FieldUtil;
 import lombok.*;
-import org.springframework.util.Assert;
 
 @Entity
 @Table(name = "comment")
@@ -36,11 +36,11 @@ public class Comment extends BaseTimeEntity {
     }
 
     public static Comment of(String content, Forum forum, User user) {
-        Assert.hasText(content, ForumErrorCode.CONTENT_EMPTY.getMessage());
-        Assert.notNull(forum, ForumErrorCode.FORUM_NOT_FOUND.getMessage());
-        Assert.notNull(user, UserErrorCode.USER_NOT_FOUND.getMessage());
-
-        return new Comment(content, forum, user);
+        return new Comment(
+                FieldUtil.hasText(content, ForumErrorCode.CONTENT_EMPTY),
+                FieldUtil.notNull(forum, ForumErrorCode.FORUM_NOT_FOUND),
+                FieldUtil.notNull(user, UserErrorCode.USER_NOT_FOUND)
+        );
     }
 
     // 수정 메서드 추가

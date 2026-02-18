@@ -6,6 +6,7 @@ import kusuri12.teens_be.domain.forum.exception.ForumErrorCode;
 import kusuri12.teens_be.domain.information.exception.InfoErrorCode;
 import kusuri12.teens_be.domain.user.domain.User;
 import kusuri12.teens_be.domain.user.exception.UserErrorCode;
+import kusuri12.teens_be.global.validation.util.FieldUtil;
 import lombok.*;
 import org.springframework.util.Assert;
 
@@ -42,11 +43,11 @@ public class Information extends BaseTimeEntity {
     }
 
     public static Information of(String title, String content, User user) {
-        Assert.hasText(title, InfoErrorCode.TITLE_EMPTY.getMessage());
-        Assert.hasText(content, InfoErrorCode.CONTENT_EMPTY.getMessage());
-        Assert.notNull(user, UserErrorCode.USER_NOT_FOUND.getMessage());
-
-        return new Information(title, content, user);
+        return new Information(
+                FieldUtil.hasText(title, InfoErrorCode.TITLE_EMPTY),
+                FieldUtil.hasText(content, InfoErrorCode.CONTENT_EMPTY),
+                FieldUtil.notNull(user, UserErrorCode.USER_NOT_FOUND)
+        );
     }
 
     // 수정 메서드 추가

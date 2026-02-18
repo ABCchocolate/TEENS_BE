@@ -5,8 +5,8 @@ import kusuri12.teens_be.domain.common.BaseTimeEntity;
 import kusuri12.teens_be.domain.forum.exception.ForumErrorCode;
 import kusuri12.teens_be.domain.user.domain.User;
 import kusuri12.teens_be.domain.user.exception.UserErrorCode;
+import kusuri12.teens_be.global.validation.util.FieldUtil;
 import lombok.*;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,11 +41,11 @@ public class Forum extends BaseTimeEntity {
     }
 
     public static Forum of(String title, String content, User user) {
-        Assert.hasText(title, ForumErrorCode.TITLE_EMPTY.getMessage());
-        Assert.hasText(content, ForumErrorCode.CONTENT_EMPTY.getMessage());
-        Assert.notNull(user, UserErrorCode.USER_NOT_FOUND.getMessage());
-
-        return new Forum(title, content, user);
+        return new Forum(
+                FieldUtil.hasText(title, ForumErrorCode.TITLE_EMPTY),
+                FieldUtil.hasText(content, ForumErrorCode.CONTENT_EMPTY),
+                FieldUtil.notNull(user, UserErrorCode.USER_NOT_FOUND)
+        );
     }
 
     // 수정 메서드
