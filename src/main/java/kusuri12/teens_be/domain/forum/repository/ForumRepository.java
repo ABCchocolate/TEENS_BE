@@ -7,11 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-
 public interface ForumRepository extends JpaRepository<Forum, Long> {
 
-    @Query("SELECT f FROM Forum f ORDER BY f.createdAt DESC")
+    @Query("SELECT f FROM Forum f JOIN FETCH f.user ORDER BY f.createdAt DESC")
     Page<Forum> findAllOrderByCreatedAtDesc(Pageable pageable);
 
     // 제목 또는 내용으로 검색

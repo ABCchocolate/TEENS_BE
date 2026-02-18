@@ -1,6 +1,8 @@
 package kusuri12.teens_be.domain.forum.presentation.dto.response;
 
 import kusuri12.teens_be.domain.forum.domain.Forum;
+import kusuri12.teens_be.domain.user.exception.UserErrorCode;
+import kusuri12.teens_be.global.validation.util.FieldUtil;
 
 import java.time.LocalDateTime;
 
@@ -16,7 +18,7 @@ public record ForumDetailResponse(
                 forum.getId(),
                 forum.getTitle(),
                 forum.getContent(),
-                forum.getUser().getNickname(),
+                FieldUtil.notNull(forum.getUser(), UserErrorCode.USER_NOT_FOUND).getNickname(),
                 forum.getCreatedAt()
         );
     }

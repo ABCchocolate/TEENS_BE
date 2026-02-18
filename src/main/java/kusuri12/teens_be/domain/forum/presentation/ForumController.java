@@ -81,7 +81,7 @@ public class ForumController {
             @RequestParam(defaultValue = "1", required = false) int page) {
 
         int pageIndex = Math.max(page, 1) - 1;
-        Pageable pageable = PageRequest.of(pageIndex, 10);
+        Pageable pageable = PageRequest.of(pageIndex, 100);
 
         return ResponseEntity.ok(commentService.getComment(forumId, pageable));
     }

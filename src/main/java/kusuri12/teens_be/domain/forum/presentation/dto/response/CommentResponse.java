@@ -1,6 +1,8 @@
 package kusuri12.teens_be.domain.forum.presentation.dto.response;
 
 import kusuri12.teens_be.domain.forum.domain.Comment;
+import kusuri12.teens_be.domain.user.exception.UserErrorCode;
+import kusuri12.teens_be.global.validation.util.FieldUtil;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +16,7 @@ public record CommentResponse(
         return new CommentResponse(
                 comment.getId(),
                 comment.getContent(),
-                comment.getUser().getNickname(),
+                FieldUtil.notNull(comment.getUser(), UserErrorCode.USER_NOT_FOUND).getNickname(),
                 comment.getCreatedAt()
         );
     }
