@@ -1,14 +1,23 @@
 package kusuri12.teens_be.domain.information.presentation.dto.response;
 
-import lombok.Builder;
+import kusuri12.teens_be.domain.information.domain.Information;
 
 import java.time.LocalDateTime;
 
-@Builder
 public record InformationDetailResponse (
         Long id,
         String title,
         String content,
         String authorName,
         LocalDateTime createdAt
-) { }
+) {
+    public static InformationDetailResponse from(Information information) {
+        return new InformationDetailResponse(
+                information.getId(),
+                information.getTitle(),
+                information.getContent(),
+                information.getUser().getNickname(),
+                information.getCreatedAt()
+        );
+    }
+}

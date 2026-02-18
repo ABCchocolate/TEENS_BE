@@ -15,6 +15,8 @@ import kusuri12.teens_be.global.security.annotation.CheckAuthor;
 import kusuri12.teens_be.global.security.annotation.CheckId;
 import kusuri12.teens_be.global.security.aspect.Authorizable;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,47 +31,22 @@ public class InformationService implements Authorizable {
     private final InformationRepository infoArticleRepository;
     private final UserRepository userRepository;
 
-    // todo: 페이징 처리하기
     // 게시글 전체 조회
-    public List<InformationListResponse> getAllInfoArticles() {
-        List<Information> articles = infoArticleRepository.findAllByOrderByCreatedAtDesc();
-
-        return articles.stream()
-                .map(article -> InformationListResponse.builder()
-                        .id(article.getId())
-                        .title(article.getTitle())
-                        .authorName(article.getUser().getNickname())
-                        .createdAt(article.getCreatedAt())
-                        .build())
-                .collect(Collectors.toList());
+    public Page<InformationListResponse> getAllInfoArticles(Pageable pageable) {
+        Page<Information> articles = infoArticleRepository.findAllByOrderByCreatedAtDesc(pageable);
+        return articles.map(InformationListResponse::of);
     }
 
     // 검색
-    public List<InformationListResponse> searchInfoArticles(String keyword) {
-        List<Information> articles = infoArticleRepository.searchByKeyword(keyword);
-
-        return articles.stream()
-                .map(article -> InformationListResponse.builder()
-                        .id(article.getId())
-                        .title(article.getTitle())
-                        .authorName(article.getUser().getNickname())
-                        .createdAt(article.getCreatedAt())
-                        .build())
-                .collect(Collectors.toList());
+    public Page<InformationListResponse> searchInfoArticles(String keyword, Pageable pageable) {
+        Page<Information> articles = infoArticleRepository.searchByKeyword(keyword, pageable);
+        return articles.map(InformationListResponse::of);
     }
 
     // 게시글 상세 조회
     public InformationDetailResponse getInfoArticleDetail(Long articleId) {
-        Information article = infoArticleRepository.findById(articleId)
-                .orElseThrow(() -> new TeensException(InfoErrorCode.INFO_NOT_FOUND));
-
-        return InformationDetailResponse.builder()
-                .id(article.getId())
-                .title(article.getTitle())
-                .content(article.getContent())
-                .authorName(article.getUser().getNickname())
-                .createdAt(article.getCreatedAt())
-                .build();
+        Information article = getInfoArticle(articleId);
+        return InformationDetailResponse.from(article);
     }
 
     // 게시글 생성
@@ -79,26 +56,26 @@ public class InformationService implements Authorizable {
                 .orElseThrow(() -> new TeensException(UserErrorCode.USER_NOT_FOUND));
 
         Information article = Information.of(request.title(), request.content(), user);
-
         infoArticleRepository.save(article);
     }
 
     @Transactional
     @CheckAuthor
     public void updateInfoArticle(@CheckId Long articleId, UpdateInformationRequest request) {
-        Information article = infoArticleRepository.findById(articleId)
-                .orElseThrow(() -> new TeensException(InfoErrorCode.INFO_NOT_FOUND));
-
+        Information article = getInfoArticle(articleId);
         article.updateTitleAndContent(request.title(), request.content());
     }
 
     @Transactional
     @CheckAuthor
     public void deleteInfoArticle(@CheckId Long articleId) {
-        Information article = infoArticleRepository.findById(articleId)
-                .orElseThrow(() -> new TeensException(InfoErrorCode.INFO_NOT_FOUND));
-
+        Information article = getInfoArticle(articleId);
         infoArticleRepository.delete(article);
+    }
+
+    private Information getInfoArticle(Long articleId) {
+        return infoArticleRepository.findById(articleId)
+                .orElseThrow(() -> new TeensException(InfoErrorCode.INFO_NOT_FOUND));
     }
 
     @Override
