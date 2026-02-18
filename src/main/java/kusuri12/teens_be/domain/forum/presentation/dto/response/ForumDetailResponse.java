@@ -1,16 +1,23 @@
 package kusuri12.teens_be.domain.forum.presentation.dto.response;
 
-import lombok.Builder;
-import java.time.LocalDateTime;
-import java.util.List;
+import kusuri12.teens_be.domain.forum.domain.Forum;
 
-@Builder
+import java.time.LocalDateTime;
+
 public record ForumDetailResponse(
         Long id,
         String title,
         String content,
         String authorName,
-        LocalDateTime createdAt,
-        List<CommentResponse> comments
+        LocalDateTime createdAt
 ) {
+    public static ForumDetailResponse from(Forum forum) {
+        return new ForumDetailResponse(
+                forum.getId(),
+                forum.getTitle(),
+                forum.getContent(),
+                forum.getUser().getNickname(),
+                forum.getCreatedAt()
+        );
+    }
 }

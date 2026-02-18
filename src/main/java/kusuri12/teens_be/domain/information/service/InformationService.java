@@ -78,11 +78,7 @@ public class InformationService implements Authorizable {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new TeensException(UserErrorCode.USER_NOT_FOUND));
 
-        Information article = Information.builder()
-                .title(request.title())
-                .content(request.content())
-                .user(user)
-                .build();
+        Information article = Information.of(request.title(), request.content(), user);
 
         infoArticleRepository.save(article);
     }
