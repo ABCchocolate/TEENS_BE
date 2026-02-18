@@ -2,11 +2,13 @@ package kusuri12.teens_be.domain.information.domain;
 
 import jakarta.persistence.*;
 import kusuri12.teens_be.domain.common.BaseTimeEntity;
+import kusuri12.teens_be.domain.forum.exception.ForumErrorCode;
+import kusuri12.teens_be.domain.information.exception.InfoErrorCode;
 import kusuri12.teens_be.domain.user.domain.User;
+import kusuri12.teens_be.domain.user.exception.UserErrorCode;
+import kusuri12.teens_be.global.validation.util.FieldUtil;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
+import org.springframework.util.Assert;
 
 @Entity
 @Table(name = "information")
@@ -34,12 +36,20 @@ public class Information extends BaseTimeEntity {
     @Column
     private String imageUrl;
 
-    @Builder
-    public Information(String title, String content, User user) {
+    private Information(String title, String content, User user) {
         this.title = title;
         this.content = content;
         this.user = user;
     }
+
+    public static Information of(String title, String content, User user) {
+        return new Information(
+                FieldUtil.hasText(title, InfoErrorCode.TITLE_EMPTY),
+                FieldUtil.hasText(content, InfoErrorCode.CONTENT_EMPTY),
+                FieldUtil.notNull(user, UserErrorCode.USER_NOT_FOUND)
+        );
+    }
+
     // 수정 메서드 추가
     public void updateTitleAndContent(String title, String content) {
         this.title = title;

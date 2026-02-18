@@ -7,12 +7,13 @@ import kusuri12.teens_be.domain.information.presentation.dto.response.Informatio
 import kusuri12.teens_be.domain.information.service.InformationService;
 import kusuri12.teens_be.global.security.userdetails.AuthDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/information")
@@ -22,12 +23,17 @@ public class InformationController {
     private final InformationService infoArticleService;
 
     @GetMapping
-    public ResponseEntity<List<InformationListResponse>> getAllInfoArticles(
+    public ResponseEntity<Page<InformationListResponse>> getAllInfoArticles(
+            @RequestParam(defaultValue = "1", required = false) int page,
             @RequestParam(required = false) String keyword) {
+
+        int pageIndex = Math.max(page, 1) - 1;
+        Pageable pageable = PageRequest.of(pageIndex, 10);
+
         if (keyword != null && !keyword.isEmpty()) {
-            return ResponseEntity.ok(infoArticleService.searchInfoArticles(keyword));
+            return ResponseEntity.ok(infoArticleService.searchInfoArticles(keyword, pageable));
         }
-        return ResponseEntity.ok(infoArticleService.getAllInfoArticles());
+        return ResponseEntity.ok(infoArticleService.getAllInfoArticles(pageable));
     }
 
     @GetMapping("/{information_id}")

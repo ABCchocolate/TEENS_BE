@@ -18,6 +18,9 @@ import kusuri12.teens_be.global.security.annotation.CheckAuthor;
 import kusuri12.teens_be.global.security.annotation.CheckId;
 import kusuri12.teens_be.global.security.aspect.Authorizable;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,33 +36,22 @@ public class ForumService implements Authorizable {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public List<ForumListResponse> getAllForums() {
-        List<Forum> forums = forumRepository.findAllOrderByCreatedAtDesc();
-
-        return forums.stream()
-                .map(forum -> ForumListResponse.builder()
-                        .id(forum.getId())
-                        .title(forum.getTitle())
-                        .authorName(forum.getUser().getNickname())
-                        .createdAt(forum.getCreatedAt())
-                        .commentCount(commentRepository.countByForumId(forum.getId()))
-                        .build())
-                .collect(Collectors.toList());
+    public Page<ForumListResponse> getAllForums(Pageable pageable) {
+        Page<Forum> forums = forumRepository.findAllOrderByCreatedAtDesc(pageable);
+        return convertResponsePage(forums);
     }
 
     @Transactional(readOnly = true)
-    public List<ForumListResponse> searchForums(String keyword) {
-        List<Forum> forums = forumRepository.searchByKeyword(keyword);
+    public Page<ForumListResponse> searchForums(Pageable pageable, String keyword) {
+        Page<Forum> forums = forumRepository.searchByKeyword(keyword, pageable);
+        return convertResponsePage(forums);
+    }
 
-        return forums.stream()
-                .map(forum -> ForumListResponse.builder()
-                        .id(forum.getId())
-                        .title(forum.getTitle())
-                        .authorName(forum.getUser().getNickname())
-                        .createdAt(forum.getCreatedAt())
-                        .commentCount(commentRepository.countByForumId(forum.getId()))
-                        .build())
-                .collect(Collectors.toList());
+    private Page<ForumListResponse> convertResponsePage(Page<Forum> forums) {
+        return forums.map(forum -> {
+            Long commentCount = commentRepository.countByForumId(forum.getId());
+            return ForumListResponse.of(forum, commentCount);
+        });
     }
 
     @Transactional(readOnly = true)
@@ -67,26 +59,8 @@ public class ForumService implements Authorizable {
         Forum forum = forumRepository.findById(forumId)
                 .orElseThrow(() -> new TeensException(ForumErrorCode.FORUM_NOT_FOUND));
 
-        // 댓글 가져오기
-        List<Comment> comments = commentRepository.findByForumIdOrderByCreatedAtAsc(forumId);
-        List<CommentResponse> commentResponses = comments.stream()
-                .map(comment -> CommentResponse.builder()
-                        .id(comment.getId())
-                        .content(comment.getContent())
-                        .authorName(comment.getUser().getNickname())
-                        .createdAt(comment.getCreatedAt())
-                        .build())
-                .collect(Collectors.toList());
-
         // 게시글 정보 반환
-        return ForumDetailResponse.builder()
-                .id(forum.getId())
-                .title(forum.getTitle())
-                .content(forum.getContent())
-                .authorName(forum.getUser().getNickname())
-                .createdAt(forum.getCreatedAt())
-                .comments(commentResponses)
-                .build();
+        return ForumDetailResponse.from(forum);
     }
 
     @Transactional
@@ -94,11 +68,7 @@ public class ForumService implements Authorizable {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new TeensException(UserErrorCode.USER_NOT_FOUND));
 
-        Forum forum = Forum.builder()
-                .title(request.title())
-                .content(request.content())
-                .user(user)
-                .build();
+        Forum forum = Forum.of(request.title(), request.content(), user);
 
         forumRepository.save(forum);
 

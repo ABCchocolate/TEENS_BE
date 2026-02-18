@@ -2,11 +2,11 @@ package kusuri12.teens_be.domain.forum.domain;
 
 import jakarta.persistence.*;
 import kusuri12.teens_be.domain.common.BaseTimeEntity;
+import kusuri12.teens_be.domain.forum.exception.ForumErrorCode;
 import kusuri12.teens_be.domain.user.domain.User;
+import kusuri12.teens_be.domain.user.exception.UserErrorCode;
+import kusuri12.teens_be.global.validation.util.FieldUtil;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comment")
@@ -29,11 +29,18 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Builder
-    public Comment(String content, Forum forum, User user) {
+    private Comment(String content, Forum forum, User user) {
         this.content = content;
         this.forum = forum;
         this.user = user;
+    }
+
+    public static Comment of(String content, Forum forum, User user) {
+        return new Comment(
+                FieldUtil.hasText(content, ForumErrorCode.CONTENT_EMPTY),
+                FieldUtil.notNull(forum, ForumErrorCode.FORUM_NOT_FOUND),
+                FieldUtil.notNull(user, UserErrorCode.USER_NOT_FOUND)
+        );
     }
 
     // 수정 메서드 추가

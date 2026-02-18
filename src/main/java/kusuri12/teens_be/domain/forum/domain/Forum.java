@@ -2,7 +2,10 @@ package kusuri12.teens_be.domain.forum.domain;
 
 import jakarta.persistence.*;
 import kusuri12.teens_be.domain.common.BaseTimeEntity;
+import kusuri12.teens_be.domain.forum.exception.ForumErrorCode;
 import kusuri12.teens_be.domain.user.domain.User;
+import kusuri12.teens_be.domain.user.exception.UserErrorCode;
+import kusuri12.teens_be.global.validation.util.FieldUtil;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -31,11 +34,18 @@ public class Forum extends BaseTimeEntity {
     @OneToMany(mappedBy = "forum", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
-    @Builder
-    public Forum(String title, String content, User user) {
+    private Forum(String title, String content, User user) {
         this.title = title;
         this.content = content;
         this.user = user;
+    }
+
+    public static Forum of(String title, String content, User user) {
+        return new Forum(
+                FieldUtil.hasText(title, ForumErrorCode.TITLE_EMPTY),
+                FieldUtil.hasText(content, ForumErrorCode.CONTENT_EMPTY),
+                FieldUtil.notNull(user, UserErrorCode.USER_NOT_FOUND)
+        );
     }
 
     // 수정 메서드
