@@ -51,6 +51,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorCode errorCode = GlobalErrorCode.VALIDATION_FAILED;
         ErrorResponse response = ErrorResponse.builder()
                 .status(errorCode.getStatus())
+                .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .errors(errors)
                 .build();
@@ -71,6 +72,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorCode errorCode = GlobalErrorCode.REQUEST_NOT_READABLE;
         ErrorResponse response = ErrorResponse.builder()
                 .status(HttpStatus.BAD_REQUEST)
+                .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .build();
 
@@ -80,12 +82,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     // TeensException 처리
     @ExceptionHandler(TeensException.class)
     public ResponseEntity<ErrorResponse> handleTeensException(TeensException e) {
-        log.error("TeensException: {}", e.getMessage());
+        log.error("TeensException: {}", e.getErrorCode().getMessage());
 
 
         ErrorCode errorCode = e.getErrorCode();
         ErrorResponse response = ErrorResponse.builder()
                 .status(errorCode.getStatus())
+                .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .build();
 
@@ -102,6 +105,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorCode errorCode = GlobalErrorCode.UNAUTHORIZED_ACCESS;
         ErrorResponse response = ErrorResponse.builder()
                 .status(errorCode.getStatus())
+                .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .build();
 
@@ -118,6 +122,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorCode errorCode = GlobalErrorCode.INTERNAL_SERVER_ERROR;
         ErrorResponse response = ErrorResponse.builder()
                 .status(errorCode.getStatus())
+                .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .build();
 
