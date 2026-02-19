@@ -62,6 +62,7 @@ public class SecurityConfig {
                         .accessDeniedHandler(customAccessDeniedHandler))
 
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/test/**").permitAll()  // test용
                         .requestMatchers(PERMITTED_AUTH).permitAll()
 
                         .requestMatchers(
