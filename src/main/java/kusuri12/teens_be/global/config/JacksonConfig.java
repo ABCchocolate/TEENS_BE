@@ -23,10 +23,16 @@ public class JacksonConfig {
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
 
-        // 날짜 및 시간 관련 모듈
-        mapper.registerModule(new JavaTimeModule());
+        // 로컬 데이트 타임 포맷 지정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        JavaTimeModule module = new JavaTimeModule();
 
-        // 날짜를 문자열(ISO-8601)로 출력
+        module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(formatter));
+        module.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(formatter));
+
+        mapper.registerModule(module);
+
+        // 날짜를 숫자 배열이 아닌 문자열로 출력
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         // JSON에 없는 필드가 Java 객체에 있어도 에러 내지 않음
@@ -34,15 +40,6 @@ public class JacksonConfig {
 
         // 값이 null인 필드는 JSON 출력에서 제외
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-        // 로컬 데이트 타임 포맷 지정
-        SimpleModule module = new SimpleModule();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-        module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(formatter));
-        module.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(formatter));
-
-        mapper.registerModule(module);
 
         return mapper;
     }

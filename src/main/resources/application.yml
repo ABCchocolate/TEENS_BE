@@ -31,6 +31,9 @@ spring:
       region:
         static: ${AWS_STATIC}
 
+  profiles:
+    active: ${PROFILE_ACTIVE:prob}
+
 server:
   port: ${PORT:8080}
 

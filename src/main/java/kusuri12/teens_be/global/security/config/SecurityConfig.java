@@ -1,16 +1,15 @@
 package kusuri12.teens_be.global.security.config;
 
 import kusuri12.teens_be.global.security.filter.GlobalExceptionFilter;
-import kusuri12.teens_be.global.error.exception.ResponseWithErrorCode;
 import kusuri12.teens_be.global.error.handler.CustomAccessDeniedHandler;
 import kusuri12.teens_be.global.error.handler.CustomAuthenticationEntryPoint;
 import kusuri12.teens_be.global.security.filter.JwtTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,6 +26,7 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Profile("prob")
 public class SecurityConfig {
 
     private final JwtTokenFilter jwtTokenFilter;
@@ -62,7 +62,6 @@ public class SecurityConfig {
                         .accessDeniedHandler(customAccessDeniedHandler))
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/test/**").permitAll()  // test용
                         .requestMatchers(PERMITTED_AUTH).permitAll()
 
                         .requestMatchers(

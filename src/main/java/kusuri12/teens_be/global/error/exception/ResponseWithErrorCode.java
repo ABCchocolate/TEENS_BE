@@ -20,6 +20,7 @@ public class ResponseWithErrorCode {
     public void response(HttpServletResponse response, ErrorCode errorCode) throws IOException {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .status(errorCode.getStatus())
+                .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .build();
 
