@@ -1,12 +1,13 @@
 package kusuri12.teens_be.test;
 
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.context.annotation.Profile;import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
+@Profile("test")
 @RestController
 @RequestMapping("/test")
 class JacksonConfigTest {
