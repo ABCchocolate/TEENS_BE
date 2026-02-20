@@ -1,4 +1,7 @@
 spring:
+  profiles:
+    active: ${PROFILE_ACTIVE:prod}
+
   jpa:
     database: mysql
     hibernate:
@@ -30,9 +33,6 @@ spring:
         secret-key: ${S3_SECRET_KEY}
       region:
         static: ${AWS_STATIC}
-
-  profiles:
-    active: ${PROFILE_ACTIVE:prob}
 
 server:
   port: ${PORT:8080}
