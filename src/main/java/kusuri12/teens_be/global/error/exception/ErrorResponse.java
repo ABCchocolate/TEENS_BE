@@ -8,6 +8,7 @@ import java.util.Map;
 @Builder
 public record ErrorResponse(
         HttpStatus status,
+        String code,
         String message,
         Map<String, String> errors
 ) { }

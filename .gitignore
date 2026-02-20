@@ -37,3 +37,4 @@ out/
 .vscode/
 
 .env
+src/main/java/kusuri12/teens_be/test/TestSecurityConfig.java
